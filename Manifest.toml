@@ -1,0 +1,10 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.12.1"
+manifest_format = "2.0"
+project_hash = "8c90d5c1546c303e4cfd27354aebb91179fec3b6"
+
+[[deps.HemiPlots]]
+path = "."
+uuid = "2079c055-d4a2-4eb8-9548-50343aa1f7d0"
+version = "1.0.0-DEV"

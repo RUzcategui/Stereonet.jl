@@ -1,0 +1,3 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+HemiPlots = "2079c055-d4a2-4eb8-9548-50343aa1f7d0"

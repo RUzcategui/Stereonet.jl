@@ -1,0 +1,7 @@
+name = "HemiPlots"
+uuid = "2079c055-d4a2-4eb8-9548-50343aa1f7d0"
+authors = ["Redescal Uzcategui <redescaluzcategui@gmail.com>"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.6"
