@@ -11,4 +11,5 @@ Archivo composite_types.jl
 """
 function composite(s::String)
     println(s)
+    println("Segundo cambio")
 end
