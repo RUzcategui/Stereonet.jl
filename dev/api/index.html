@@ -15,4 +15,35 @@ julia&gt; trend_plunge_from_cartesian([1, 1, 0])   # Northeast horizontal
 (45.0, 0.0)
 
 julia&gt; trend_plunge_from_cartesian([0.707, 0.707, 0.707])  # 45° plunge northeast
-(45.0, 45.0)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/RUzcategui/HemiPlots.jl/blob/ae2f74ce67885bc2fef078824efefdbc6992f598/src/nets_coordinates.jl#L34-L86">source</a></section></details></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../examples/">« Examples</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Sunday 30 November 2025 11:06">Sunday 30 November 2025</span>. Using Julia version 1.12.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+(45.0, 45.0)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/RUzcategui/HemiPlots.jl/blob/14198e8faa6f92f94aa7ac4af3916af3a21e90d0/src/nets_coordinates.jl#L34-L86">source</a></section></details></article><article><details class="docstring" open="true"><summary id="HemiPlots.cartesian_from_trend_plunge"><a class="docstring-binding" href="#HemiPlots.cartesian_from_trend_plunge"><code>HemiPlots.cartesian_from_trend_plunge</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">cartesian_from_trend_plunge(trend::Real, plunge::Real)
+cartesian_from_trend_plunge(m::Matrix{&lt;:Real})</code></pre><p>Convert trend/plunge measurements to Cartesian coordinates of a pole unit vector.</p><p><strong>Arguments</strong></p><ul><li><code>trend</code>: Bearing angle in degrees (0-360° clockwise from North)</li><li><code>plunge</code>: Inclination angle in degrees (-90° to +90°, positive downward)</li><li><code>matrix</code>: N×2 matrix where col1 = trends, col2 = plunges</li></ul><p><strong>Returns</strong></p><ul><li>3-element Vector for single measurement [North, East, Down]</li><li>N×3 Matrix for multiple measurements [North East Down]</li></ul><p><strong>Notes</strong></p><ul><li>Uses geological convention: North=X, East=Y, Down=Z</li><li>Input angles in degrees, output is unit vector</li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/RUzcategui/HemiPlots.jl/blob/14198e8faa6f92f94aa7ac4af3916af3a21e90d0/src/nets_coordinates.jl#L94-L112">source</a></section></details></article><article><details class="docstring" open="true"><summary id="HemiPlots.change_view_direction"><a class="docstring-binding" href="#HemiPlots.change_view_direction"><code>HemiPlots.change_view_direction</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">change_view_direction(ov::AbstractVector, view_trend, view_plunge, az_correction)
+change_view_direction(trd::Real, plg::Real, view_trend, view_plunge, az_correction)
+
+Transform geological orientation vectors or angles to a new viewing coordinate system.
+
+This function provides two methods for transforming geological orientation data:
+1. Transform a Cartesian direction vector to view coordinates
+2. Transform trend/plunge angles to new trend/plunge angles in view coordinates
+
+# Arguments
+
+## Method 1: Cartesian Vector Transformation
+- `ov::AbstractVector`: 3-element Cartesian direction vector [x, y, z] in geographic coordinates
+(X=East, Y=North, Z=Up)
+- `view_trend::Real`: Trend angle in degrees [0, 360] for the viewing direction
+- `view_plunge::Real`: Plunge angle in degrees [-180, 180] for the viewing inclination
+- `az_correction::Real`: Azimuth correction angle in degrees [0, 360] for final orientation adjustment
+
+## Method 2: Trend/Plunge Angle Transformation  
+- `trd::Real`: Input trend angle in degrees [0, 360] to be transformed
+- `plg::Real`: Input plunge angle in degrees [-180, 180] to be transformed
+- `view_trend::Real`, `view_plunge::Real`, `az_correction::Real`: View parameters as above
+
+# Returns
+
+## Method 1
+- `ov_view::Vector{Float64}`: Transformed 3D Cartesian vector in view coordinates
+
+## Method 2  
+- `(rtrd, rplg)::Tuple{Float64, Float64}`: Transformed trend and plunge angles in degrees
+representing the orientation in the view coordinate system</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/RUzcategui/HemiPlots.jl/blob/14198e8faa6f92f94aa7ac4af3916af3a21e90d0/src/nets_coordinates.jl#L178-L210">source</a></section></details></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../examples/">« Examples</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Sunday 30 November 2025 12:08">Sunday 30 November 2025</span>. Using Julia version 1.12.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
