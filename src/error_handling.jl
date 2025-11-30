@@ -1,3 +1,4 @@
+#=
 """
     error_handling(s::String)
 
@@ -9,6 +10,7 @@ julia> error("Archivo error_handling.jl")
 Archivo error_handling.jl
 ```
 """
+=#
 function error_handling(s::String)
     println(s)
     println("Tercer cambio")

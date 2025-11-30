@@ -2,5 +2,4 @@
 CurrentModule = HemiPlots
 ```
 
-# HemiPlots
-
+# Examples

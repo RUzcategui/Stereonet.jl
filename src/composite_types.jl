@@ -1,3 +1,4 @@
+#=
 """
     composite(s::String)
 
@@ -9,6 +10,7 @@ julia> composite("Archivo composite_types.jl")
 Archivo composite_types.jl
 ```
 """
+=#
 function composite(s::String)
     println(s)
     println("Segundo cambio")

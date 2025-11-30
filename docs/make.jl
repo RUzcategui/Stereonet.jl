@@ -1,6 +1,9 @@
 using HemiPlots
 using Documenter
 
+println("=== Starting documentation build ===")
+println("Documenter version: ", pkgversion(Documenter))
+
 DocMeta.setdocmeta!(HemiPlots, :DocTestSetup, :(using HemiPlots); recursive=true)
 
 makedocs(;
@@ -10,10 +13,12 @@ makedocs(;
     format=Documenter.HTML(;
         canonical="https://RUzcategui.github.io/HemiPlots.jl",
         edit_link="main",
-        assets=String[],
     ),
     pages=[
         "Home" => "index.md",
+        "User Guide" => "guide.md",
+        "Examples" => "examples.md",
+        "API Reference" => "api.md" ,
     ],
 )
 
