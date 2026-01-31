@@ -1,17 +1,19 @@
+function radial_ticks_coords(step::Int; r0 = 1.0, len = 0.05)
+    θs = 0:step:(360 - step)
+    n = length(θs)
 
-function ticks_coords(len, step)
-    t = []  
-    for θ in 0:step:360
-        xi, yi = cosd(θ), sind(θ)
-        xf, yf = (1 + len) .* (xi, yi)
-        
-        push!(t, [xi yi 0.0])
-        push!(t, [xf yf 0.0])
-        push!(t, [NaN NaN NaN])
+    starts = Matrix{Float64}(undef, n, 2)
+    ends   = Matrix{Float64}(undef, n, 2)
+
+    for (i, θ) in enumerate(θs)
+        x, y = cosd(θ), sind(θ)
+        starts[i, :] .= (r0 * x, r0 * y)
+        ends[i,   :] .= ((r0 + len) * x, (r0 + len) * y)
     end
-    
-    return vcat(t...,)
+
+    return starts, ends
 end
+
 
 function filter_ticks(matrix::Matrix{Float64})
     #extract end point of each tick line

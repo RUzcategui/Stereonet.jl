@@ -12,6 +12,5 @@ hemi
 scatter!
 lines!
 smallc!
-daylight!
 save
 ```

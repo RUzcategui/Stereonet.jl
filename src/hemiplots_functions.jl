@@ -309,17 +309,33 @@ function small_circle_coords(
     axis_view = change_view_direction(vec(axis_world), view, acor; reproject=false)
     axis_view /= norm(axis_view)
 
-    # Process both axis directions
+
     function process_axis(axis::AbstractVector)
         sc = small_circle(axis, angle)
         sh = select_hemisphere(sc, :lower)
-        xy_proj_fn(sh, :lower)
+        xy = xy_proj_fn(sh, :lower)
+
+        if size(xy, 1) ≥ 3
+            return xy
+        else
+            return nothing
+        end
     end
 
-    result = [process_axis(axis_view), process_axis(-axis_view)]
+    segments = Matrix{Float64}[]
+
+    seg1 = process_axis(axis_view)
+    seg1 !== nothing && push!(segments, seg1)
+
+    seg2 = process_axis(-axis_view)
+    seg2 !== nothing && push!(segments, seg2)
+
+    return segments
 
     return result
 end
+
+
 
 function small_circle_grid(
     sstep::Real,
@@ -470,112 +486,6 @@ function plane_coordinates(
     end
     
     return result
-
-end
-
-# DAYLIGHT
-
-function safe_acosd(x::Real)
-    
-    if x ≈ 1
-        return 0.0
-    elseif x ≈ -1
-        return 180.0
-    else
-        return acosd(x)
-    end
-    
-end
-
-function envelope_cartesian(
-    slope_strike, 
-    slope_dip,
-    view, 
-    acor;
-    step = 0.1
-    )
-    pts = Vector{Vector{Float64}}()
-
-    for rake in 0:step:180
-        plunge = slope_dip != 0 ?
-            asind(sind(slope_dip) * sind(rake)) : 0.0
-
-        eff_strike = slope_dip == 0 ? rake : slope_strike
-        angle = safe_acosd(cosd(rake) / cosd(plunge))
-
-        trd = mod(eff_strike + angle + 180, 360)
-        plg = 90 - plunge
-
-        cart_c = cartesian_coords(trd, plg)
-
-        cart_c = change_view_direction(vec(cart_c), view, acor; reproject=false)
-
-        push!(pts, vec(cart_c))
-
-    end
-
-    push!(pts, pts[1])
-    return reduce(vcat, permutedims.(pts))
-end
-
-function find_crossings(m::Matrix{Float64}; atol = 1e-10)
-
-    size(m, 2) == 3 || error("Matrix must be n×3")
-
-    z = m[:, 3]
-    n = size(m, 1)
-
-    # classify points
-    signz = sign.(z)
-    signz[abs.(z) .< atol] .= 0
-
-    # find crossings
-    cut_idx = Int[]
-    for i in 1:n-1
-        if signz[i] * signz[i+1] < 0
-
-            push!(cut_idx, i)
-        end
-    end
-    return cut_idx
-end
-
-function split_by_equator(m::Matrix{Float64})
-
-    cut_idx = find_crossings(m)
-    # no crossings → single segment
-    if isempty(cut_idx)
-        return [m]
-    end
-    
-    i1, i2 = cut_idx
-
-    seg1 = m[i1+1:i2, :]
-    seg2 = vcat(m[i2+1:end, :], m[1:i1, :])
-
-    return [seg1, seg2]
-end
-
-function daylight_coordinates(
-    slope_strike::Real,
-    slope_dip::Real,
-    net::Symbol,
-    view::Tuple,
-    acor::Real
-    )
-
-    envelope_xyz = envelope_cartesian(slope_strike, slope_dip, view, acor) 
-    segments = split_by_equator(envelope_xyz)
-    
-    xy_proj_fn = select_net_equation(net)
-    xy_segments = Vector{Matrix{Float64}}()
-
-    for seg in segments
-        z_mean=mean(seg[:, 3])
-        z_mean < 0.0 && (seg=-seg)
-        push!(xy_segments, xy_proj_fn(seg, :lower))
-    end
-    return xy_segments
 
 end
 
