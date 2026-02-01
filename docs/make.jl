@@ -1,4 +1,4 @@
-using HemiPlots
+using Stereonet
 using Documenter
 using CairoMakie
 
@@ -11,14 +11,14 @@ println("Documenter version: ", pkgversion(Documenter))
 println("=== Generating tables ===")
 include("generate_tables.jl")
 
-DocMeta.setdocmeta!(HemiPlots, :DocTestSetup, :(using HemiPlots); recursive=true)
+DocMeta.setdocmeta!(Stereonet, :DocTestSetup, :(using Stereonet); recursive=true)
 
 makedocs(
-    modules=[HemiPlots],
+    modules=[Stereonet],
     authors="Redescal Uzcategui <redescaluzcategui@gmail.com>",
-    sitename="HemiPlots.jl",
+    sitename="Stereonet.jl",
     format=Documenter.HTML(;
-        canonical="https://RUzcategui.github.io/HemiPlots.jl",
+        canonical="https://RUzcategui.github.io/Stereonet.jl",
         edit_link="main",
         assets = ["assets/custom.css"],
         inventory_version = "0.1", 
@@ -32,6 +32,6 @@ makedocs(
 )
 
 deploydocs(;
-    repo="github.com/RUzcategui/HemiPlots.jl",
+    repo="github.com/RUzcategui/Stereonet.jl",
     devbranch="main",
 )

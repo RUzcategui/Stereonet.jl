@@ -1,13 +1,10 @@
 ```@meta
-CurrentModule = HemiPlots
+CurrentModule = Stereonet
 ```
 
 # API Reference
 
-
-
 ```@docs
-HemiPlots
 hemi
 scatter!
 lines!

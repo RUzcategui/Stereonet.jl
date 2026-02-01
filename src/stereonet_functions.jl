@@ -1,6 +1,8 @@
 # UTILS
 
-struct HemiPlotsError <: Exception msg::String end
+struct StereonetError <: Exception 
+    msg::String 
+end
 
 function normal_vector(dipdir::Real, dip::Real)
     
@@ -35,8 +37,8 @@ function cartesian_coords(trd::Union{Real, AbstractVector{<:Real}},
     m = Matrix{Float64}(undef, n, 3)
     
     for i in 1:n
-        (trd_vec[i] < 0 || trd_vec[i] > 360) && throw(HemiPlotsError("Trend must be between 0° and 360°, got $(trd_vec[i])"))
-        (plg_vec[i] < -180 || plg_vec[i] > 180) && throw(HemiPlotsError("Plunge must be between -180° and 180°, got $(plg_vec[i])"))
+        (trd_vec[i] < 0 || trd_vec[i] > 360) && throw(StereonetError("Trend must be between 0° and 360°, got $(trd_vec[i])"))
+        (plg_vec[i] < -180 || plg_vec[i] > 180) && throw(StereonetError("Plunge must be between -180° and 180°, got $(plg_vec[i])"))
         m[i,1] = cosd(trd_vec[i]) * cosd(plg_vec[i])  # North (x)
         m[i,2] = sind(trd_vec[i]) * cosd(plg_vec[i])  # East (y)
         m[i,3] = sind(plg_vec[i])                      # Down (z)
@@ -84,7 +86,7 @@ function select_net_equation(net::Symbol)
     
     net == :wulff && return xy_wulff
     net == :schmidt && return xy_schmidt
-    throw(HemiPlotsError("Unknown net: $net — expected :wulff or :schmidt"))
+    throw(StereonetError("Unknown net: $net — expected :wulff or :schmidt"))
     
 end
 
@@ -300,7 +302,7 @@ function small_circle_coords(
     xy_proj_fn = select_net_equation(net)
 
     if !(0 ≤ angle ≤ 180)        
-        throw(HemiPlotsError("Cone angle must be between 0° and 180°, got '$angle'"))
+        throw(StereonetError("Cone angle must be between 0° and 180°, got '$angle'"))
     end
 
     # Transform axis to view space
@@ -403,7 +405,7 @@ function line_coordinates(
     form_vec = isa(form, Symbol) ? fill(form, n) : form
     
     length(t) == length(p) == length(form_vec) ||
-        throw(HemiPlotsError("Trend, plunge and form vectors must have same length"))
+        throw(StereonetError("Trend, plunge and form vectors must have same length"))
 
     cart_mat = Matrix{Float64}(undef, n, 3)
     for i in 1:n
@@ -466,7 +468,7 @@ function plane_coordinates(
     n = length(dipdir)
 
     length(dipdir) == length(dip) ||
-        throw(HemiPlotsError("Dipdir and dip vectors must have same length"))
+        throw(StereonetError("Dipdir and dip vectors must have same length"))
 
     result = Vector{Matrix{Float64}}(undef, n)
     

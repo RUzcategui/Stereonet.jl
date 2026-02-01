@@ -1,9 +1,9 @@
 ```@meta
-CurrentModule = HemiPlots
+CurrentModule = Stereonet
 ```
 # Work in progress and future directions
 
-HemiPlots is an active work in progress.
+Stereonet is an active work in progress.
 
 Present development is focused on:
 

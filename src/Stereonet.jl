@@ -1,10 +1,4 @@
-"""
-# HemiPlots.jl
-HemiPlots.jl is a plotting package for visualizing three-dimensional
-orientation data on two-dimensional nets (e.g. equal-angle
-and equal-area projections) using Makie.
-"""
-module HemiPlots
+module Stereonet
 
 using LinearAlgebra: cross, norm, dot
 using Statistics: mean
@@ -14,9 +8,10 @@ using Makie: @recipe, DataAspect, hidedecorations!, hidespines!, current_backend
 
 import Makie: color, lines!, scatter!, poly!, save, display
 
-include("hemiplots_functions.jl") 
+include("stereonet_functions.jl") 
 include("makie_plots.jl") 
 include("frame.jl")
 
 export hemi, smallc!
+
 end

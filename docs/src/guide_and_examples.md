@@ -1,25 +1,25 @@
 ```@meta
-CurrentModule = HemiPlots
+CurrentModule = Stereonet
 ```
 
 ## User Guide
 
 ### Installation
 
-HemiPlots is not yet registered in the General Julia registry.
+Stereonet is not yet registered in the General Julia registry.
 You can install it directly from GitHub:
 
 ```julia
 using Pkg
 
-] add https://github.com/RUzcategui/HemiPlots.jl
+] add https://github.com/RUzcategui/Stereonet.jl
 ```
 
 ### Creating a Stereonet
 
 Create a stereonet with default attributes:
 ```@example plot1
-using HemiPlots
+using Stereonet
 h = hemi(size=(300, 300))
 ``` 
 
@@ -106,7 +106,7 @@ Attributes are defined as keyword arguments. The following table describes each 
 Nets are usually displayed with the primitive oriented horizontally (viewed from above). With the attribute view, a net can be generated from any desired direction:
 
 ```@example plot2
-using HemiPlots
+using Stereonet
 
 h = hemi(
     net = :schmidt, 
@@ -123,7 +123,7 @@ h = hemi(
 Linear features (lines, poles, axes) are plotted using `scatter!`:
 
 ```@example plot3
-using HemiPlots
+using Stereonet
 import Makie: scatter!
 
 h = hemi(net = :schmidt, size=(300, 300))
@@ -164,7 +164,7 @@ The `scatter!` function accepts standard Makie scatter attributes plus one speci
 - Both `:a` and `:v` plot the point at the same location on the lower hemisphere
 
 ```@example plot4
-using HemiPlots
+using Stereonet
 import Makie: scatter!
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
@@ -177,7 +177,7 @@ h
 - `:v` (vector): Plots the point on the upper hemisphere
 
 ```@example plot5
-using HemiPlots
+using Stereonet
 import Makie: scatter!
 
 h = hemi(net=:wulff, view=(0, 90), size=(300, 300))
@@ -190,7 +190,7 @@ h
     When using :v with negative plunge, you may want to distinguish between lower and upper hemisphere points. One approach is to use hollow markers:
 
 ```@example plot6
-using HemiPlots
+using Stereonet
 import Makie: scatter!
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
@@ -208,7 +208,7 @@ h
 ##### Different Form for Each Point
 
 ```@example plot7
-using HemiPlots
+using Stereonet
 import Makie: scatter!
 
 trends = [0.0, 45.0, 90.0, 135.0]
@@ -222,7 +222,7 @@ h
 
 ##### Same Form for All Points
 ```@example plot8
-using HemiPlots
+using Stereonet
 import Makie: scatter!
 
 trends = [0.0, 45.0, 90.0, 135.0]
@@ -237,7 +237,7 @@ h
 
 Planar features (great circles) are plotted using `lines!`:
 ```@example plot9
-using HemiPlots
+using Stereonet
 import Makie: lines!
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
@@ -278,7 +278,7 @@ The `lines!` function accepts standard Makie scatter attributes plus two special
 
 #### Example: Multiple Planes
 ```@example plot10
-using HemiPlots
+using Stereonet
 import Makie: lines!
 
 h = hemi(size=(300, 300))
@@ -301,7 +301,7 @@ Small circles are conical sections on a sphere, defined by the axis trend and pl
 #### Small Circles
 
 ```@example plot11
-using HemiPlots
+using Stereonet
 import Makie: lines!
 import Makie: poly!
 
@@ -326,7 +326,7 @@ h
     The :line option avoids this by allowing the trace to terminate cleanly at the primitive circle. 
 
 ```@example plot12
-using HemiPlots
+using Stereonet
 import Makie: lines!
 import Makie: poly!
 
@@ -344,13 +344,13 @@ h
 
 ### Saving Plots
 
-HemiPlots uses Makie's saving functionality. The format is determined by the file extension.
+Stereonet uses Makie's saving functionality. The format is determined by the file extension.
 
 #### Vector Formats (PDF, SVG)
 
 For publication-quality vector graphics, use CairoMakie backend:
 ```julia
-using HemiPlots
+using Stereonet
 import Makie: save
 
 h = hemi(size=(300, 300))
@@ -367,7 +367,7 @@ save("path/to/folder/some_plot.svg", h)
 
 For raster images, use GLMakie backend with custom resolution:
 ```julia
-using HemiPlots, GLMakie
+using Stereonet, GLMakie
 import Makie: save
 
 h = hemi(size=(300, 300))
@@ -387,7 +387,7 @@ save("path/to/folder/some_plot.png", h,px_per_unit = 6)
 
 You can explicitly activate backends before saving:
 ```julia
-using HemiPlots
+using Stereonet
 using CairoMakie, GLMakie
 import Makie: save
 

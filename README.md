@@ -1,6 +1,6 @@
-# HemiPlots.jl
+# Stereonet.jl
 
-HemiPlots.jl is a plotting package for visualizing three-dimensional
+Stereonet.jl is a plotting package for visualizing three-dimensional
 orientation data on two-dimensional nets using Makie.
 
 It provides methods to visualize planar, linear features, and

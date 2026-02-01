@@ -1,4 +1,4 @@
-abstract type AbstractHemi end
+abstract type AbstractStereonet end
 
 mutable struct GridAttributes
     view::Tuple{Real,Real}
@@ -38,13 +38,13 @@ mutable struct GridAttributes
     end
 end
 
-mutable struct HemiPlot <: AbstractHemi
+mutable struct Stereonet <: AbstractStereonet
     fig::Figure
     ax::Axis
     att::GridAttributes
 end
 
-function draw_hemi!(hp::HemiPlot)
+function draw_hemi!(hp::Stereonet)
   ax = hp.ax
   att = hp.att
 
@@ -141,11 +141,11 @@ function draw_hemi!(hp::HemiPlot)
 end
 
 """
-    hemi(; kwargs...) -> HemiPlot
+    hemi(; kwargs...) -> Stereonet
 
 Create a hemispherical stereonet plotting canvas.
 
-This function initializes a `HemiPlot` object, including a Makie `Figure`,
+This function initializes a `Stereonet` object, including a Makie `Figure`,
 an `Axis`, and optional stereonet grid and frame elements. The plot is
 immediately drawn and ready for adding graphical elements: planes,
 lines, and small circles.
@@ -188,7 +188,7 @@ lines, and small circles.
   Figure size in pixels.
 
 # Returns
-- `HemiPlot`  
+- `Stereonet`  
   A plotting object to which stereonet elements can be added.
 
 # Examples
@@ -234,7 +234,7 @@ function hemi(;
         tlen=tlen
     )
 
-    hp = HemiPlot(fig, ax, att)
+    hp = Stereonet(fig, ax, att)
     draw_hemi!(hp)
 
     return hp
@@ -247,7 +247,7 @@ end
 #Lines on the unit sphere are displayed as scatter plots
 
 """
-    scatter!(h::HemiPlot, trd, plg; form=:a, kwargs...)
+    scatter!(h::Stereonet, trd, plg; form=:a, kwargs...)
 
 Plot linear features on a stereonet.
 
@@ -255,7 +255,7 @@ Lineations are defined by trend and plunge and rendered as points
 on the selected stereonet projection.
 
 # Arguments
-- `h::HemiPlot`  
+- `h::Stereonet`  
   Target stereonet plot.h = hemi(net = :wulff, view = (0, 90))
 
 - `trd::Real or AbstractVector{<:Real}`  
@@ -281,7 +281,7 @@ scatter!(h, 45, 30)
 scatter!(h, [10, 40], [20, 60])
 """ 
 function scatter!(
-    h::HemiPlot,
+    h::Stereonet,
     trd::Union{Real, AbstractVector{<:Real}},
     plg::Union{Real, AbstractVector{<:Real}};
     form::Union{Symbol, AbstractVector{Symbol}} = :a,
@@ -315,7 +315,7 @@ end
 
  
 """
-    lines!(h::HemiPlot, dipdir, dip; hemi=:lower, view=:trace, kwargs...)
+    lines!(h::Stereonet, dipdir, dip; hemi=:lower, view=:trace, kwargs...)
 
 Plot planar features on a stereonet.
 
@@ -324,7 +324,7 @@ the selected `view` mode. Multiple planes may be plotted in a single call
 by passing vectors of equal length.
 
 # Arguments
-- `h::HemiPlot`  
+- `h::Stereonet`  
   Target stereonet plot.
 
 - `dipdir::Real or AbstractVector{<:Real}`  
@@ -353,7 +353,7 @@ lines!(h, 120, 45)
 lines!(h, [30, 60], [40, 50], view = :pole)
 """
 function lines!(
-    h::HemiPlot,
+    h::Stereonet,
     dipdir::Union{Real, AbstractVector{<:Real}},
     dip::Union{Real, AbstractVector{<:Real}};
     hemi::Symbol = :lower,
@@ -365,7 +365,7 @@ function lines!(
     )
 
     view ∈ (:trace, :pole) ||
-        throw(HemiPlotsError("view must be :trace or :pole"))
+        throw(StereonetError("view must be :trace or :pole"))
 
     # Normalize inputs to vectors
     dipdir_vec = dipdir isa AbstractVector ? dipdir : [dipdir]
@@ -476,7 +476,7 @@ end
 
 
 """
-    smallc!(h::HemiPlot, trd, plg, angle; draw=:line, kwargs...)
+    smallc!(h::Stereonet, trd, plg, angle; draw=:line, kwargs...)
 
 Plot small circles on a stereonet.
 
@@ -485,7 +485,7 @@ angle. Depending on the view direction, a small circle may appear as a
 single closed curve or as two separate curve segments.
 
 # Arguments
-- `h::HemiPlot`  
+- `h::Stereonet`  
   Target stereonet plot.
 
 - `trd::Real or AbstractVector{<:Real}`  
@@ -520,7 +520,7 @@ smallc!(h, 0, 0, 30)
 smallc!(h, [0, 90], [0, 0], [20, 40])
 """
 function smallc!(
-    h::HemiPlot,
+    h::Stereonet,
     trd::Union{Real, AbstractVector{<:Real}},
     plg::Union{Real, AbstractVector{<:Real}},
     angle::Union{Real, AbstractVector{<:Real}};
@@ -530,7 +530,7 @@ function smallc!(
     kwargs...
     )
 
-    draw ∈ [:line, :poly] || throw(HemiPlotsError("draw must be :line or :poly"))
+    draw ∈ [:line, :poly] || throw(StereonetError("draw must be :line or :poly"))
 
     n = length(trd)
     pts1 = Matrix{Float64}[]
@@ -581,9 +581,9 @@ end
 ##############################
 
 """
-     (filename::String, h::HemiPlot; kwargs...) -> String
+     (filename::String, h::Stereonet; kwargs...) -> String
 
-Save a `HemiPlot` to disk.
+Save a `Stereonet` to disk.
 
 The output format is inferred from the file extension. Vector formats
 such as PDF and SVG require `CairoMakie` to be available.
@@ -592,7 +592,7 @@ such as PDF and SVG require `CairoMakie` to be available.
 - `filename::String`  
   Output file path.
 
-- `h::HemiPlot`  
+- `h::Stereonet`  
   Plot to save.
 
 - `kwargs...`  
@@ -605,7 +605,7 @@ such as PDF and SVG require `CairoMakie` to be available.
 save("stereonet.png", h)
 save("stereonet.pdf", h)
 """
-function save(name::String, h::HemiPlot; kwargs...)
+function save(name::String, h::Stereonet; kwargs...)
     abspath_file = abspath(name)
     dir = dirname(abspath_file)
     if !isdir(dir) && dir != ""
@@ -617,7 +617,7 @@ function save(name::String, h::HemiPlot; kwargs...)
     # For vector formats, we need CairoMakie
     if ext in [".pdf", ".svg", ".eps"]
         if !isdefined(Main, :CairoMakie)
-            HemiPlotsError("
+            StereonetError("
             To save to $ext format, you need CairoMakie:
             using CairoMakie
             ")
@@ -630,7 +630,7 @@ function save(name::String, h::HemiPlot; kwargs...)
     return abspath_file
 end
 
-function display(hp::HemiPlot)
+function display(hp::Stereonet)
 
     if current_backend() isa Module
         backend = current_backend()
@@ -644,15 +644,15 @@ function display(hp::HemiPlot)
     end
 end
 
-function Base.show(io::IO, ::MIME"text/plain", h::HemiPlot)
-    println(io, "HemiPlot(view=$(h.att.view), net=$(h.att.net))")
+function Base.show(io::IO, ::MIME"text/plain", h::Stereonet)
+    println(io, "Stereonet(view=$(h.att.view), net=$(h.att.net))")
 end
 
 # For Jupyter/inline display
-function Base.show(io::IO, mime::MIME"image/png", h::HemiPlot)
+function Base.show(io::IO, mime::MIME"image/png", h::Stereonet)
     show(io, mime, h.fig)
 end
 
-function Base.show(io::IO, mime::MIME"image/svg+xml", h::HemiPlot)
+function Base.show(io::IO, mime::MIME"image/svg+xml", h::Stereonet)
     show(io, mime, h.fig)
 end
