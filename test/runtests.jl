@@ -1,6 +1,6 @@
 using LinearAlgebra
 using Test
-using stereonet_functions
+using Stereonet
 
 @testset "Stereonet.jl" begin
 
