@@ -80,16 +80,16 @@ h = hemi(
     frame = :show,
     grid_color=:deepskyblue2,
     grid_linestyle=:solid
-)</code></pre><img src="631aa334.svg" alt="Example block output"/><h3 id="Plotting-Linear-Features"><a class="docs-heading-anchor" href="#Plotting-Linear-Features">Plotting Linear Features</a><a id="Plotting-Linear-Features-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Linear-Features" title="Permalink"></a></h3><p>Linear features (lines, poles, axes) are plotted using <code>scatter!</code>:</p><pre><code class="language-julia hljs">using Stereonet
+)</code></pre><img src="631aa334.svg" alt="Example block output"/><h3 id="Plotting-Linear-Features"><a class="docs-heading-anchor" href="#Plotting-Linear-Features">Plotting Linear Features</a><a id="Plotting-Linear-Features-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Linear-Features" title="Permalink"></a></h3><p>Linear features are plotted using <code>lineations!</code>:</p><pre><code class="language-julia hljs">using Stereonet
 import Makie: scatter!
 
 h = hemi(net = :schmidt, size=(300, 300))
-scatter!(h, 300, 20)  # trend=300°, plunge=20°
-scatter!(h, [50], [0], marker = :rect,
+lineations!(h, 300, 20)  # trend=300°, plunge=20°
+lineations!(h, [50], [0], marker = :rect,
         markersize = 11, color = :yellow1)
-scatter!(h, [220, 180, 140], [50, 50, 50], marker = :xcross,
+lineations!(h, [220, 180, 140], [50, 50, 50], marker = :xcross,
         markersize = 13, color = :green)
-h</code></pre><img src="57c0c473.svg" alt="Example block output"/><h4 id="Linear-Features-Attributes"><a class="docs-heading-anchor" href="#Linear-Features-Attributes">Linear Features Attributes</a><a id="Linear-Features-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Linear-Features-Attributes" title="Permalink"></a></h4><p>The <code>scatter!</code> function accepts standard Makie scatter attributes plus one special attribute:</p><table>
+h</code></pre><img src="57c0c473.svg" alt="Example block output"/><h4 id="Linear-Features-Attributes"><a class="docs-heading-anchor" href="#Linear-Features-Attributes">Linear Features Attributes</a><a id="Linear-Features-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Linear-Features-Attributes" title="Permalink"></a></h4><p>The <code>lineations!</code> function accepts standard Makie <code>scatter!</code> attributes plus one special attribute:</p><table>
   <thead>
     <tr class = "columnLabelRow">
       <th style = "font-weight: bold; text-align: left;">Attribute</th>
@@ -102,22 +102,23 @@ h</code></pre><img src="57c0c473.svg" alt="Example block output"/><h4 id="Linear
       <td style = "text-align: left;">Determines whether linear features are treated as axes or vectors, choose between :a for axes and :v for vectors. Default: :a</td>
     </tr>
   </tbody>
-</table><div class="admonition is-info" id="Note-2f213341f998ddb4"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-2f213341f998ddb4" title="Permalink"></a></header><div class="admonition-body"><p>For linear data, hemisphere selection is encoded in the orientation itself. Plunge sign and form control whether antipodal directions are distinguished:</p></div></div><p><strong>Behavior with positive plunge (downward):</strong></p><ul><li>Both <code>:a</code> and <code>:v</code> plot the point at the same location on the lower hemisphere</li></ul><pre><code class="language-julia hljs">using Stereonet
+</table>
+<div class="admonition is-info" id="Note-2f213341f998ddb4"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-2f213341f998ddb4" title="Permalink"></a></header><div class="admonition-body"><p>For linear data, hemisphere selection is encoded in the orientation itself. Plunge sign and form control whether antipodal directions are distinguished:</p></div></div><p><strong>Behavior with positive plunge (downward):</strong></p><ul><li>Both <code>:a</code> and <code>:v</code> plot the point at the same location on the lower hemisphere</li></ul><pre><code class="language-julia hljs">using Stereonet
 import Makie: scatter!
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
-scatter!(h, [90, 90], [45, 45], form = [:v, :a], color = :red)
+lineations!(h, [90, 90], [45, 45], form = [:v, :a], color = :red)
 h</code></pre><img src="355f1c0e.svg" alt="Example block output"/><p><strong>Behavior with negative plunge (upward):</strong></p><ul><li><code>:a</code> (axis): Plots the antipode point on the lower hemisphere</li><li><code>:v</code> (vector): Plots the point on the upper hemisphere</li></ul><pre><code class="language-julia hljs">using Stereonet
 import Makie: scatter!
 
 h = hemi(net=:wulff, view=(0, 90), size=(300, 300))
-scatter!(h, [90], [-45], form = [:a], color = :green)
-scatter!(h, [90], [-45], form = [:v], color = :red)
+lineations!(h, [90], [-45], form = [:a], color = :green)
+lineations!(h, [90], [-45], form = [:v], color = :red)
 h</code></pre><img src="6f890c10.svg" alt="Example block output"/><div class="admonition is-info" id="Note-86866c57781a1ceb"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-86866c57781a1ceb" title="Permalink"></a></header><div class="admonition-body"><p>When using :v with negative plunge, you may want to distinguish between lower and upper hemisphere points. One approach is to use hollow markers:</p></div></div><pre><code class="language-julia hljs">using Stereonet
 import Makie: scatter!
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
-scatter!(h, 270, -20, form = :v,
+lineations!(h, 270, -20, form = :v,
             color = :transparent,
             strokewidth = 1,
             marker = :hexagon,
@@ -131,7 +132,7 @@ plunges = [15.0, 30.0, -45.0, -60.0]
 forms = [:a, :v, :a, :v]
 
 h = hemi(size=(300, 300))
-scatter!(h, trends, plunges, form=forms)
+lineations!(h, trends, plunges, form=forms)
 h</code></pre><img src="ab49b9a1.svg" alt="Example block output"/><h5 id="Same-Form-for-All-Points"><a class="docs-heading-anchor" href="#Same-Form-for-All-Points">Same Form for All Points</a><a id="Same-Form-for-All-Points-1"></a><a class="docs-heading-anchor-permalink" href="#Same-Form-for-All-Points" title="Permalink"></a></h5><pre><code class="language-julia hljs">using Stereonet
 import Makie: scatter!
 
@@ -139,14 +140,14 @@ trends = [0.0, 45.0, 90.0, 135.0]
 plunges = [15.0, 30.0, -45.0, -60.0]
 
 h = hemi(size=(300, 300))
-scatter!(h, trends, plunges, form=:v)
-h</code></pre><img src="ee569d4e.svg" alt="Example block output"/><h3 id="Plotting-Planar-Features"><a class="docs-heading-anchor" href="#Plotting-Planar-Features">Plotting Planar Features</a><a id="Plotting-Planar-Features-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Planar-Features" title="Permalink"></a></h3><p>Planar features (great circles) are plotted using <code>lines!</code>:</p><pre><code class="language-julia hljs">using Stereonet
+lineations!(h, trends, plunges, form=:v)
+h</code></pre><img src="ee569d4e.svg" alt="Example block output"/><h3 id="Plotting-Planar-Features"><a class="docs-heading-anchor" href="#Plotting-Planar-Features">Plotting Planar Features</a><a id="Plotting-Planar-Features-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Planar-Features" title="Permalink"></a></h3><p>Planar features are plotted using <code>traces!</code>:</p><pre><code class="language-julia hljs">using Stereonet
 import Makie: lines!
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
-lines!(h, 120, 45)  # strike=120°, dip=45°
-lines!(h, [250], [70], color=:darkgreen, linestyle= (:dashdot, :dense), linewidth=2)
-h</code></pre><img src="66c885b3.svg" alt="Example block output"/><h4 id="Planar-Features-Attributes"><a class="docs-heading-anchor" href="#Planar-Features-Attributes">Planar Features Attributes</a><a id="Planar-Features-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Planar-Features-Attributes" title="Permalink"></a></h4><p>The <code>lines!</code> function accepts standard Makie scatter attributes plus two special attribute:</p><table>
+traces!(h, 120, 45)  # strike=120°, dip=45°
+traces!(h, [250], [70], color=:darkgreen, linestyle= (:dashdot, :dense), linewidth=2)
+h</code></pre><img src="66c885b3.svg" alt="Example block output"/><h4 id="Planar-Features-Attributes"><a class="docs-heading-anchor" href="#Planar-Features-Attributes">Planar Features Attributes</a><a id="Planar-Features-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Planar-Features-Attributes" title="Permalink"></a></h4><p>The <code>traces!</code> function accepts standard Makie <code>lines!</code> attributes plus two special attribute:</p><table>
   <thead>
     <tr class = "columnLabelRow">
       <th style = "font-weight: bold; text-align: left;">Attribute</th>
@@ -174,8 +175,8 @@ strikes = [0, 45, 90, 135]
 dips = [30, 45, 60, 75]
 
 for (strike, dip) in zip(strikes, dips)
-    lines!(h, strikes, dips, color=:green, linewidth=1)
-    lines!(h, strikes, dips, color=:green, view=:pole)
+    traces!(h, strikes, dips, color=:green, linewidth=1)
+    traces!(h, strikes, dips, color=:green, view=:pole)
 end
 h</code></pre><img src="9ed83138.svg" alt="Example block output"/><h3 id="Small-Circles"><a class="docs-heading-anchor" href="#Small-Circles">Small Circles</a><a id="Small-Circles-1"></a><a class="docs-heading-anchor-permalink" href="#Small-Circles" title="Permalink"></a></h3><p>Small circles are conical sections on a sphere, defined by the axis trend and plunge, and the cone’s half-angle.</p><h4 id="Small-Circles-2"><a class="docs-heading-anchor" href="#Small-Circles-2">Small Circles</a><a class="docs-heading-anchor-permalink" href="#Small-Circles-2" title="Permalink"></a></h4><pre><code class="language-julia hljs">using Stereonet
 import Makie: lines!
@@ -243,4 +244,4 @@ save(&quot;path/to/folder/some_plot.psvg&quot;, h)
 
 # For raster formats
 GLMakie.activate!() 
-save(&quot;path/to/folder/some_plot.png&quot;, h,px_per_unit = 4)</code></pre><div class="admonition is-success" id="Tip-74c6fa4138c4c534"><header class="admonition-header">Tip<a class="admonition-anchor" href="#Tip-74c6fa4138c4c534" title="Permalink"></a></header><div class="admonition-body"><ul><li>Use <strong>PDF or SVG</strong> for publications and presentations (scalable, no quality loss)</li><li>Use <strong>PNG</strong> for web pages and quick previews</li><li>Increase <code>px_per_unit</code> for higher resolution PNGs (values of 2-6 work well)</li><li>Default size is 600×600 pixels; change with <code>size=(width, height)</code> in <code>hemi()</code></li></ul></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../future_work/">Work in progress and future directions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Wednesday 4 February 2026 16:16">Wednesday 4 February 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+save(&quot;path/to/folder/some_plot.png&quot;, h,px_per_unit = 4)</code></pre><div class="admonition is-success" id="Tip-74c6fa4138c4c534"><header class="admonition-header">Tip<a class="admonition-anchor" href="#Tip-74c6fa4138c4c534" title="Permalink"></a></header><div class="admonition-body"><ul><li>Use <strong>PDF or SVG</strong> for publications and presentations (scalable, no quality loss)</li><li>Use <strong>PNG</strong> for web pages and quick previews</li><li>Increase <code>px_per_unit</code> for higher resolution PNGs (values of 2-6 work well)</li><li>Default size is 600×600 pixels; change with <code>size=(width, height)</code> in <code>hemi()</code></li></ul></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../future_work/">Work in progress and future directions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Wednesday 4 February 2026 20:29">Wednesday 4 February 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
