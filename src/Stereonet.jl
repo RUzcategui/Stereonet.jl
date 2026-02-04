@@ -12,6 +12,6 @@ include("stereonet_functions.jl")
 include("makie_plots.jl") 
 include("frame.jl")
 
-export hemi, smallc!
+export lines!, scatter!, hemi, smallc!
 
 end
