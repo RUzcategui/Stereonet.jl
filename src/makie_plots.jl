@@ -247,7 +247,7 @@ end
 #Lines on the unit sphere are displayed as scatter plots
 
 """
-    scatter!(h::HemiPlot, trd, plg; form=:a, kwargs...)
+    lineations!(h::HemiPlot, trd, plg; form=:a, kwargs...)
 
 Plot linear features on a stereonet.
 
@@ -277,10 +277,10 @@ on the selected stereonet projection.
 - Makie plot object.
 
 # Examples
-scatter!(h, 45, 30)
-scatter!(h, [10, 40], [20, 60])
+lineations!(h, 45, 30)
+lineations!(h, [10, 40], [20, 60])
 """ 
-function scatter!(
+function lineations!(
     h::HemiPlot,
     trd::Union{Real, AbstractVector{<:Real}},
     plg::Union{Real, AbstractVector{<:Real}};
@@ -315,7 +315,7 @@ end
 
  
 """
-    lines!(h::HemiPlot, dipdir, dip; hemi=:lower, view=:trace, kwargs...)
+    traces!(h::HemiPlot, dipdir, dip; hemi=:lower, view=:trace, kwargs...)
 
 Plot planar features on a stereonet.
 
@@ -352,7 +352,7 @@ by passing vectors of equal length.
 lines!(h, 120, 45)
 lines!(h, [30, 60], [40, 50], view = :pole)
 """
-function lines!(
+function traces!(
     h::HemiPlot,
     dipdir::Union{Real, AbstractVector{<:Real}},
     dip::Union{Real, AbstractVector{<:Real}};

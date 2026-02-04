@@ -89,7 +89,8 @@ Attributes are defined as keyword arguments. The following table describes each 
 </table>
 
 ```
-
+  
+  
 #### Net view direction
 
 Nets are usually displayed with the primitive oriented horizontally (viewed from above). With the attribute view, a net can be generated from any desired direction:
@@ -109,24 +110,24 @@ h = hemi(
 ```
 ### Plotting Linear Features
 
-Linear features (lines, poles, axes) are plotted using `scatter!`:
+Linear features are plotted using `lineations!`:
 
 ```@example plot3
 using Stereonet
 import Makie: scatter!
 
 h = hemi(net = :schmidt, size=(300, 300))
-scatter!(h, 300, 20)  # trend=300°, plunge=20°
-scatter!(h, [50], [0], marker = :rect, 
+lineations!(h, 300, 20)  # trend=300°, plunge=20°
+lineations!(h, [50], [0], marker = :rect, 
         markersize = 11, color = :yellow1)
-scatter!(h, [220, 180, 140], [50, 50, 50], marker = :xcross, 
+lineations!(h, [220, 180, 140], [50, 50, 50], marker = :xcross, 
         markersize = 13, color = :green)       
 h
 ``` 
 
 #### Linear Features Attributes
 
-The `scatter!` function accepts standard Makie scatter attributes plus one special attribute:
+The `lineations!` function accepts standard Makie `scatter!` attributes plus one special attribute:
 
 ```@raw html
 <table>
@@ -143,9 +144,9 @@ The `scatter!` function accepts standard Makie scatter attributes plus one speci
     </tr>
   </tbody>
 </table>
+
 ```
-		     
-		    	    
+		  
 !!! note
     For linear data, hemisphere selection is encoded in the orientation itself. Plunge sign and form control whether antipodal directions are distinguished:
 
@@ -157,7 +158,7 @@ using Stereonet
 import Makie: scatter!
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
-scatter!(h, [90, 90], [45, 45], form = [:v, :a], color = :red)
+lineations!(h, [90, 90], [45, 45], form = [:v, :a], color = :red)
 h
 ```
 
@@ -170,8 +171,8 @@ using Stereonet
 import Makie: scatter!
 
 h = hemi(net=:wulff, view=(0, 90), size=(300, 300))
-scatter!(h, [90], [-45], form = [:a], color = :green)
-scatter!(h, [90], [-45], form = [:v], color = :red)
+lineations!(h, [90], [-45], form = [:a], color = :green)
+lineations!(h, [90], [-45], form = [:v], color = :red)
 h
 ```
 
@@ -183,7 +184,7 @@ using Stereonet
 import Makie: scatter!
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
-scatter!(h, 270, -20, form = :v, 
+lineations!(h, 270, -20, form = :v, 
             color = :transparent, 
             strokewidth = 1, 
             marker = :hexagon,
@@ -205,7 +206,7 @@ plunges = [15.0, 30.0, -45.0, -60.0]
 forms = [:a, :v, :a, :v] 
 
 h = hemi(size=(300, 300))
-scatter!(h, trends, plunges, form=forms)
+lineations!(h, trends, plunges, form=forms)
 h
 ``` 
 
@@ -218,25 +219,25 @@ trends = [0.0, 45.0, 90.0, 135.0]
 plunges = [15.0, 30.0, -45.0, -60.0]
 
 h = hemi(size=(300, 300))
-scatter!(h, trends, plunges, form=:v)
+lineations!(h, trends, plunges, form=:v)
 h
 ```
 
 ### Plotting Planar Features
 
-Planar features (great circles) are plotted using `lines!`:
+Planar features are plotted using `traces!`:
 ```@example plot9
 using Stereonet
 import Makie: lines!
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
-lines!(h, 120, 45)  # strike=120°, dip=45°
-lines!(h, [250], [70], color=:darkgreen, linestyle= (:dashdot, :dense), linewidth=2)
+traces!(h, 120, 45)  # strike=120°, dip=45°
+traces!(h, [250], [70], color=:darkgreen, linestyle= (:dashdot, :dense), linewidth=2)
 h
 ``` 
 #### Planar Features Attributes
 
-The `lines!` function accepts standard Makie scatter attributes plus two special attribute:
+The `traces!` function accepts standard Makie `lines!` attributes plus two special attribute:
 
 ```@raw html
 <table>
@@ -259,6 +260,7 @@ The `lines!` function accepts standard Makie scatter attributes plus two special
 </table>
 
 ```
+		    
 
 !!! note
     Plane traces are invariant under hemisphere–dip sign changes; for example,
@@ -277,8 +279,8 @@ strikes = [0, 45, 90, 135]
 dips = [30, 45, 60, 75]
 
 for (strike, dip) in zip(strikes, dips)
-    lines!(h, strikes, dips, color=:green, linewidth=1)
-    lines!(h, strikes, dips, color=:green, view=:pole)
+    traces!(h, strikes, dips, color=:green, linewidth=1)
+    traces!(h, strikes, dips, color=:green, view=:pole)
 end
 h
 ```

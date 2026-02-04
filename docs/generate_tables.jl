@@ -68,8 +68,8 @@ end
 function update_guide()
 
     attrs_table = generate_attributes_table()
-    scatter_table   = generate_scatter_attribute_table()
-    lines_table   = generate_lines_attribute_table()
+    lineations_table   = generate_scatter_attribute_table()
+    traces_table   = generate_lines_attribute_table()
     
     guide_path = joinpath(@__DIR__, "src", "guide_and_examples.md")
     
@@ -92,30 +92,30 @@ function update_guide()
         @warn "No <!-- ATTRIBUTES_TABLE --> placeholder found in guide_and_examples.md"
     end
 
-    # Insert scatter! attribute table
-	if contains(guide_content, "<!-- SCATTER_TABLE -->")
+    # Insert lineations! attribute table
+	if contains(guide_content, "<!-- LINEATIONS_TABLE -->")
 		guide_content = replace(guide_content,
-			"<!-- SCATTER_TABLE -->" => """
+			"<!-- LINEATIONS_TABLE -->" => """
             ```@raw html
-			$(scatter_table)
+			$(lineations_table)
             \```
 		    """)
-        println("✓ Scatter! attribute table updated in guide_and_examples.md")
+        println("✓ Lineations attribute table updated in guide_and_examples.md")
 	else
-		@warn "No <!-- SCATTER_TABLE --> placeholder found in guide_and_examples.md"
+		@warn "No <!-- LINEATIONS_TABLE --> placeholder found in guide_and_examples.md"
     end
 
-        # Insert lines! attribute table
-	if contains(guide_content, "<!-- LINES_TABLE -->")
+        # Insert traces! attribute table
+	if contains(guide_content, "<!-- TRACES_TABLE -->")
 		guide_content = replace(guide_content,
-			"<!-- LINES_TABLE -->" => """
+			"<!-- TRACES_TABLE -->" => """
             ```@raw html
-			$(lines_table)
+			$(traces_table)
             \```
 		    """)
-        println("✓ Lines! attribute table updated in guide_and_examples.md")
+        println("✓ Traces attribute table updated in guide_and_examples.md")
 	else
-		@warn "No <!-- LINES_TABLE --> placeholder found in guide_and_examples.md"
+		@warn "No <!-- TRACES_TABLE --> placeholder found in guide_and_examples.md"
     end
 
     # Write back to file

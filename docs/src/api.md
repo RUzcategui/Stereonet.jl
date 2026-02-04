@@ -6,8 +6,8 @@ CurrentModule = Stereonet
 
 ```@docs
 hemi
-scatter!
-lines!
+lineations!
+traces!
 smallc!
 save
 ```
