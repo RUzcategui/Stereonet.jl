@@ -4,17 +4,6 @@ CurrentModule = Stereonet
 
 ## User Guide
 
-### Installation
-
-Stereonet is not yet registered in the General Julia registry.
-You can install it directly from GitHub:
-
-```julia
-using Pkg
-
-] add https://github.com/RUzcategui/Stereonet.jl
-```
-
 ### Creating a Stereonet
 
 Create a stereonet with default attributes:
