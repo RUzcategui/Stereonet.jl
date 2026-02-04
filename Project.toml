@@ -1,6 +1,6 @@
 name = "Stereonet"
 uuid = "2079c055-d4a2-4eb8-9548-50343aa1f7d0"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Redescal Uzcategui <redescaluzcategui@gmail.com>"]
 
 [deps]
