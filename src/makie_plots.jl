@@ -139,7 +139,7 @@ function draw_hemi!(hp::HemiPlot)
     
     return hp
 end
-
+ 
 """
     hemi(; kwargs...) -> HemiPlot
 
@@ -151,48 +151,31 @@ immediately drawn and ready for adding graphical elements: planes,
 lines, and small circles.
 
 # Keyword Arguments
-- `view::Tuple{Real,Real} = (0, 90)`  
-  Viewing direction as `(trend, plunge)` in degrees.
-
-- `grid::Symbol = :show`  
-  Whether to draw the stereonet grid (`:show` or `:hide`).
-
-- `frame::Symbol = :show`  
-  Whether to draw the stereonet frame (`:show` or `:hide`).
-
-- `net::Symbol = :wulff`  
-  Projection type. Choose between `:wulff` for equiangular ptojectos and`:schmidt` for equiareal ptojection.
-
-- `sstep::Int = 10`  
-  Angular spacing (degrees) for small-circle grid.
-
-- `gstep::Int = 10`  
-  Angular spacing (degrees) for great-circle grid.
-
-- `acor::Real = 0`  
-  Additional rotation angle (degrees) around the z-axis applied after view transformation.
-
-- `grid_color::Symbol = :gray`  
-  Color used for grid and frame elements.
-
-- `grid_linestyle::Symbol = :dash`  
-  Line style for grid elements.
-
-- `grid_linewidth::Real = 0.5`  
-  Line width for grid elements.
-
-- `grid_alpha::Real = 1.0`  
-  Transparency for grid elements.
-
-- `size::Tuple{Real,Real} = (600, 600)`  
-  Figure size in pixels.
+- `view::Tuple{Real,Real}`: Viewing direction as `(trend, plunge)` in degrees. 
+  Default is `(0, 90)`.
+- `grid::Symbol`: Whether to draw the stereonet grid (`:show` or `:hide`). 
+  Default is `:show`.
+- `frame::Symbol`: Whether to draw the stereonet frame (`:show` or `:hide`). 
+  Default is `:show`.
+- `net::Symbol`: Projection type. Choose between `:wulff` for equiangular 
+  projection and `:schmidt` for equal-area projection. Default is `:wulff`.
+- `sstep::Int`: Angular spacing (degrees) for small-circle grid. Default is `10`.
+- `gstep::Int`: Angular spacing (degrees) for great-circle grid. Default is `10`.
+- `acor::Real`: Additional rotation angle (degrees) around the z-axis applied 
+  after view transformation. Default is `0`.
+- `grid_color::Symbol`: Color used for grid and frame elements. Default is `:gray`.
+- `grid_linestyle::Symbol`: Line style for grid elements. Default is `:dash`.
+- `grid_linewidth::Real`: Line width for grid elements. Default is `0.5`.
+- `grid_alpha::Real`: Transparency for grid elements. Default is `1.0`.
+- `size::Tuple{Real,Real}`: Figure size in pixels. Default is `(600, 600)`.
 
 # Returns
-- `HemiPlot`  
-  A plotting object to which elements can be added.
+- `HemiPlot`: A plotting object to which elements can be added.
 
 # Examples
+```julia
 h = hemi(net = :wulff, view = (0, 90))
+```
 """
 function hemi(;
     view::Tuple{Real,Real} = (0, 90),
@@ -255,31 +238,25 @@ Lineations are defined by trend and plunge and rendered as points
 on the selected stereonet projection.
 
 # Arguments
-- `h::HemiPlot`  
-  Target stereonet plot.h = hemi(net = :wulff, view = (0, 90))
-
-- `trd::Real or AbstractVector{<:Real}`  
-  Trend(s) in degrees.
-
-- `plg::Real or AbstractVector{<:Real}`  
-  Plunge(s) in degrees.
+- `h::HemiPlot`: Target stereonet plot.
+- `trd::Real` or `AbstractVector{<:Real}`: Trend(s) in degrees.
+- `plg::Real` or `AbstractVector{<:Real}`: Plunge(s) in degrees.
 
 # Keyword Arguments
-- `form::Symbol or AbstractVector{Symbol} = :a`  
-
-  Whether linear features are treated as axis or vectors.
-  Use `:a` to plot lines as axes or `:v` to plot lines as vectors.
-
-- `kwargs...`  
-  Additional keyword arguments passed to Makie’s `scatter!`.
+- `form::Symbol` or `AbstractVector{Symbol}`: Whether linear features are treated 
+  as axes or vectors. Use `:a` to plot lines as axes or `:v` to plot lines as 
+  vectors. Default is `:a`.
+- `kwargs...`: Additional keyword arguments passed to Makie's `scatter!`.
 
 # Returns
 - Makie plot object.
 
 # Examples
+```julia
 lineations!(h, 45, 30)
 lineations!(h, [10, 40], [20, 60])
-""" 
+```
+"""  
 function lineations!(
     h::HemiPlot,
     trd::Union{Real, AbstractVector{<:Real}},
@@ -312,8 +289,6 @@ end
     return trend, plunge
 end
 
-
- 
 """
     traces!(h::HemiPlot, dipdir, dip; hemi=:lower, view=:trace, kwargs...)
 
@@ -324,33 +299,31 @@ the selected `view` mode. Multiple planes may be plotted in a single call
 by passing vectors of equal length.
 
 # Arguments
-- `h::HemiPlot`  
-  Target stereonet plot.
-
-- `dipdir::Real or AbstractVector{<:Real}`  
-  Dip direction(s) in degrees.
-
-- `dip::Real or AbstractVector{<:Real}`  
-  Dip angle(s) in degrees.
+- `h::HemiPlot`: Target stereonet plot.
+- `dipdir::Real` or `AbstractVector{<:Real}`: Dip direction(s) in degrees.
+- `dip::Real` or `AbstractVector{<:Real}`: Dip angle(s) in degrees.
 
 # Keyword Arguments
-- `hemi::Symbol = : lower`  
-  Hemisphere selection (`:lower` or `:upper`).
-
-- `view::Symbol = :trace`  
-  Plot representation:
-  - `:trace` — great-circle trace of the plane
-  - `:pole`  — pole to the plane
-
-- `kwargs...`  
-  Additional keyword arguments passed to Makie’s `lines!` or `scatter!`.
+- `hemi::Symbol`: Hemisphere selection (`:lower` or `:upper`). Default is `:lower`.
+- `view::Symbol`: Planar feature representation. Options are `:trace` (great-circle 
+  trace of the plane) or `:pole` (pole to the plane). Default is `:trace`.
+- `polecolor::Symbol`: Fill color of the pole. Default is `:black`.
+- `polealpha::Real`: Alpha value of the pole fill color attribute. Default is `1.0`.
+- `strokecolor::Symbol`: Stroke color for pole outlines. Default is `:black`.
+- `strokewidth::Real`: Line width for pole outlines. Default is `0`.
+- `linecolor::Symbol`: Line color for traces. Default is `:black`.
+- `linewidth::Real`: Line width for traces. Default is `1.3`.
+- `linealpha::Real`: Line alpha value for traces. Default is `1.0`.
+- `kwargs...`: Additional keyword arguments passed to Makie's `lines!` or `scatter!`.
 
 # Returns
 - Makie plot object.
 
 # Examples
-lines!(h, 120, 45)
-lines!(h, [30, 60], [40, 50], view = :pole)
+```julia
+traces!(h, 120, 45)
+traces!(h, [30, 60], [40, 50], view = :pole)
+```
 """
 function traces!(
     h::HemiPlot,
@@ -358,9 +331,13 @@ function traces!(
     dip::Union{Real, AbstractVector{<:Real}};
     hemi::Symbol = :lower,
     view::Symbol = :trace,
-	color::Symbol = :black,
-    linewidth::Real = 1,
-    strokewidth=0,
+    polecolor::Symbol = :black,
+    polealpha::Real = 1,
+    strokecolor::Symbol = :black,
+    strokewidth::Real = 0,
+    linecolor::Symbol = :black,
+    linewidth::Real = 1.3,
+    linealpha::Real = 1,
     kwargs...
     )
 
@@ -381,11 +358,10 @@ function traces!(
         isa(curves, Matrix) && (curves = [curves])
 
         for line in curves
-            lines!(h.ax, line[:,1], line[:,2]; color=color, linewidth=linewidth, kwargs...)
+            lines!(h.ax, line[:,1], line[:,2]; color=linecolor, alpha=linealpha, linewidth=linewidth, kwargs...)
         end
         return nothing
     end
-
 
     # Pole view
     trd = similar(dipdir_vec, Float64)
@@ -405,8 +381,7 @@ function traces!(
     )
 
     pts = vcat(pts...)
-
-    return scatter!(h.ax, pts[:,1], pts[:,2]; strokewidth=strokewidth, kwargs...)
+    return scatter!(h.ax, pts[:,1], pts[:,2]; color=polecolor, alpha=polealpha, strokecolor=strokecolor, strokewidth=strokewidth, kwargs...)
 end
 
 #######################
@@ -485,48 +460,41 @@ angle. Depending on the view direction, a small circle may appear as a
 single closed curve or as two separate curve segments.
 
 # Arguments
-- `h::HemiPlot`  
-  Target stereonet plot.
-
-- `trd::Real or AbstractVector{<:Real}`  
-  Trend(s) of the cone axis in degrees.
-
-- `plg::Real or AbstractVector{<:Real}`  
-  Plunge(s) of the cone axis in degrees.
-
-- `angle::Real or AbstractVector{<:Real}`  
-  Cone opening angle(s) in degrees.
+- `h::HemiPlot`: Target stereonet plot.
+- `trd::Real` or `AbstractVector{<:Real}`: Trend(s) of the cone axis in degrees.
+- `plg::Real` or `AbstractVector{<:Real}`: Plunge(s) of the cone axis in degrees.
+- `angle::Real` or `AbstractVector{<:Real}`: Cone opening angle(s) in degrees.
 
 # Keyword Arguments
-- `draw::Symbol = :line`  
-  Drawing mode:
-  - `:line` — draw curve(s)
-  - `:poly` — draw filled polygon(s)
-
-- `color::Symbol = :skyblue1`  
-  Fill color when `draw = :poly`.
-
-- `strokewidth::Real = 1`  
-  Line width for outlines.
-
-- `kwargs...`  
-  Additional keyword arguments passed to Makie.
+- `draw::Symbol`: Drawing mode. Options are `:line` (draw curve(s)) or `:poly` 
+  (draw filled polygon(s)). Default is `:line`.
+- `fill::Symbol`: Color of the polygon. Default is `:skyblue1`.
+- `polyalpha::Real`: Alpha value of the fill attribute. Default is `0.3`.
+- `linecolor::Symbol`: Line color for outlines. Default is `:black`.
+- `linewidth::Real`: Line width for outlines. Default is `1.3`.
+- `linealpha::Real`: Line alpha value for outlines. Default is `0.5`.
+- `kwargs...`: Additional keyword arguments passed to Makie.
 
 # Returns
 - Makie plot object.
 
 # Examples
+```julia
 smallc!(h, 0, 0, 30)
 smallc!(h, [0, 90], [0, 0], [20, 40])
-"""
+```
+"""   
 function smallc!(
     h::HemiPlot,
     trd::Union{Real, AbstractVector{<:Real}},
     plg::Union{Real, AbstractVector{<:Real}},
     angle::Union{Real, AbstractVector{<:Real}};
     draw::Symbol = :line,
-	color::Symbol = :black,
-    linewidth::Real = 1,
+    fill::Symbol = :skyblue1,
+    polyalpha::Real = 0.3,
+    linecolor::Symbol = :black,
+    linewidth::Real = 1.3,
+    linealpha::Real = 0.3,
     kwargs...
     )
 
@@ -562,15 +530,15 @@ function smallc!(
     #plot
     if draw == :line
         if !isempty(pts1) && isempty(pts2)
-            return lines!(h.ax, vcat(pts1...); color=color, linewidth=linewidth, kwargs...)
+            return lines!(h.ax, vcat(pts1...); color=linecolor, alpha=linealpha, linewidth=linewidth, kwargs...)
         elseif isempty(pts1) && !isempty(pts2)
-            return lines!(h.ax, vcat(pts2...); color=color, linewidth=linewidth, kwargs...)
+            return lines!(h.ax, vcat(pts2...); color=linecolor, alpha=linealpha, linewidth=linewidth, kwargs...)
         else
-            return lines!(h.ax, vcat(vcat(pts1...), vcat(pts2...), [NaN NaN]); kwargs...)
+            return lines!(h.ax, vcat(vcat(pts1...), vcat(pts2...), [NaN NaN]); color=linecolor, alpha=linealpha, linewidth=linewidth, kwargs...)
         end
     elseif draw == :poly
         if !isempty(polys)
-            return poly!(h.ax, polys; color = color, strokewidth = 0 ,kwargs...)
+            return poly!(h.ax, polys; color=fill, alpha=polyalpha, strokewidth=0 ,kwargs...)
         end 
     end
       
