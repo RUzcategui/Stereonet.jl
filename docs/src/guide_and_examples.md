@@ -1,18 +1,32 @@
 ```@meta
 CurrentModule = Stereonet
 ```
+## Backend Activation
 
-## User Guide
+Remember to call a specific backend to render your plots:
 
-### Creating a Stereonet
+```julia
+using Stereonet
+using CairoMakie, GLMakie
+
+CairoMakie.activate!()
+# plot and save with CairoMakie
+
+GLMakie.activate!()
+# plot and save with GLMakie
+```
+
+## Creating a Stereonet
 
 Create a stereonet with default attributes:
 ```@example plot1
 using Stereonet
+using CairoMakie
+
 h = hemi(size=(300, 300))
 ``` 
 
-#### Grid and Frame Attributes
+## Grid and Frame Attributes
 
 Attributes are defined as keyword arguments. The following table describes each attribute:
 
@@ -90,14 +104,13 @@ Attributes are defined as keyword arguments. The following table describes each 
 
 ```
   
-  
-#### Net view direction
+## Net view direction
 
 Nets are usually displayed with the primitive oriented horizontally (viewed from above). With the attribute view, a net can be generated from any desired direction:
 
 ```@example plot2
 using Stereonet
-
+using CairoMakie
 h = hemi(
     net = :schmidt, 
     view = (30, 20),
@@ -108,13 +121,13 @@ h = hemi(
     grid_linestyle=:solid
 )
 ```
-### Plotting Linear Features
+## Plotting Linear Features
 
 Linear features are plotted using `lineations!`:
 
 ```@example plot3
 using Stereonet
-import Makie: scatter!
+using CairoMakie
 
 h = hemi(net = :schmidt, size=(300, 300))
 lineations!(h, 300, 20)  # trend=300°, plunge=20°
@@ -125,9 +138,9 @@ lineations!(h, [220, 180, 140], [50, 50, 50], marker = :xcross,
 h
 ``` 
 
-#### Linear Features Attributes
+## Linear Features Attributes
 
-The `lineations!` function accepts standard Makie `scatter!` attributes plus one special attribute:
+`lineations!` attributes are defined as keyword arguments. The following table describes each attribute:
 
 ```@raw html
 <table>
@@ -142,33 +155,41 @@ The `lineations!` function accepts standard Makie `scatter!` attributes plus one
       <td style = "text-align: left;">form::Union{Symbol, AbstractVector{Symbol}}</td>
       <td style = "text-align: left;">Determines whether linear features are treated as axes or vectors, choose between :a for axes and :v for vectors. Default: :a</td>
     </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">color::Symbol</td>
+      <td style = "text-align: left;">Fill color of the marker. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">markersize::Real</td>
+      <td style = "text-align: left;">Size of the marker. Default: 6</td>
+    </tr>
   </tbody>
 </table>
 
 ```
-		  
+
 !!! note
     For linear data, hemisphere selection is encoded in the orientation itself. Plunge sign and form control whether antipodal directions are distinguished:
 
-**Behavior with positive plunge (downward):**
+##### Behavior with positive plunge (downward):
 - Both `:a` and `:v` plot the point at the same location on the lower hemisphere
 
 ```@example plot4
 using Stereonet
-import Makie: scatter!
+using CairoMakie
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
 lineations!(h, [90, 90], [45, 45], form = [:v, :a], color = :red)
 h
 ```
 
-**Behavior with negative plunge (upward):**
+##### Behavior with negative plunge (upward):
 - `:a` (axis): Plots the antipode point on the lower hemisphere
 - `:v` (vector): Plots the point on the upper hemisphere
 
 ```@example plot5
 using Stereonet
-import Makie: scatter!
+using CairoMakie
 
 h = hemi(net=:wulff, view=(0, 90), size=(300, 300))
 lineations!(h, [90], [-45], form = [:a], color = :green)
@@ -181,7 +202,7 @@ h
 
 ```@example plot6
 using Stereonet
-import Makie: scatter!
+using CairoMakie
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
 lineations!(h, 270, -20, form = :v, 
@@ -199,7 +220,7 @@ h
 
 ```@example plot7
 using Stereonet
-import Makie: scatter!
+using CairoMakie
 
 trends = [0.0, 45.0, 90.0, 135.0]
 plunges = [15.0, 30.0, -45.0, -60.0]
@@ -211,9 +232,10 @@ h
 ``` 
 
 ##### Same Form for All Points
+
 ```@example plot8
 using Stereonet
-import Makie: scatter!
+using CairoMakie
 
 trends = [0.0, 45.0, 90.0, 135.0]
 plunges = [15.0, 30.0, -45.0, -60.0]
@@ -223,21 +245,21 @@ lineations!(h, trends, plunges, form=:v)
 h
 ```
 
-### Plotting Planar Features
+## Plotting Planar Features
 
 Planar features are plotted using `traces!`:
 ```@example plot9
 using Stereonet
-import Makie: lines!
+using CairoMakie
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
 traces!(h, 120, 45)  # strike=120°, dip=45°
 traces!(h, [250], [70], color=:darkgreen, linestyle= (:dashdot, :dense), linewidth=2)
 h
 ``` 
-#### Planar Features Attributes
+## Planar Features Attributes
 
-The `traces!` function accepts standard Makie `lines!` attributes plus two special attribute:
+`traces!` attributes are defined as keyword arguments. The following table describes each attribute:
 
 ```@raw html
 <table>
@@ -256,11 +278,38 @@ The `traces!` function accepts standard Makie `lines!` attributes plus two speci
       <td style = "text-align: left;">view::Symbol</td>
       <td style = "text-align: left;">Whether to represent planes as traces or poles. Options:trace or :pole. Default: :trace</td>
     </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">polecolor::Symbol</td>
+      <td style = "text-align: left;">Fill color of the pole. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">polealpha::Real</td>
+      <td style = "text-align: left;">Alpha value of the pole fill color attribute. Default: 1.0</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">strokecolor::Symbol</td>
+      <td style = "text-align: left;">Stroke color for pole outlines. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">strokewidth::Real</td>
+      <td style = "text-align: left;">Line width for pole outlines. Default: 0</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linecolor::Symbol</td>
+      <td style = "text-align: left;">Line color for traces. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linewidth::Real</td>
+      <td style = "text-align: left;">Line width for traces. Default: 1.3</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linealpha::Real</td>
+      <td style = "text-align: left;">Line alpha value for traces. Default: 1.0</td>
+    </tr>
   </tbody>
 </table>
 
 ```
-		    
 
 !!! note
     Plane traces are invariant under hemisphere–dip sign changes; for example,
@@ -270,7 +319,7 @@ The `traces!` function accepts standard Makie `lines!` attributes plus two speci
 #### Example: Multiple Planes
 ```@example plot10
 using Stereonet
-import Makie: lines!
+using CairoMakie
 
 h = hemi(size=(300, 300))
 
@@ -285,16 +334,13 @@ end
 h
 ```
 
-### Small Circles
+## Small Circles
 
 Small circles are conical sections on a sphere, defined by the axis trend and plunge, and the cone’s half-angle.
 
-#### Small Circles
-
 ```@example plot11
 using Stereonet
-import Makie: lines!
-import Makie: poly!
+using CairoMakie
 
 h = hemi(size=(300, 300))
 
@@ -309,8 +355,49 @@ half_angles = [15, 15]
 smallc!(h, trends, plunges, half_angles, draw=:poly, color=:skyblue)
 h
 ```
+## Small Circles Features Attributes
 
-#### Why :line and :poly
+`smallc!` attributes are defined as keyword arguments. The following table describes each attribute:
+
+```@raw html
+<table>
+  <thead>
+    <tr class = "columnLabelRow">
+      <th style = "font-weight: bold; text-align: left;">Attribute</th>
+      <th style = "font-weight: bold; text-align: left;">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">draw::Symbol</td>
+      <td style = "text-align: left;">Drawing mode. Options are :line (draw circles outlines) or :poly (draw filled cirles). Default is :line</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">fill::Symbol</td>
+      <td style = "text-align: left;">Fill color of circles. Default: :skyblue1</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">polyalpha::Real</td>
+      <td style = "text-align: left;">Alpha value of the fill attribute. Default: 0.3</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linecolor::Symbol</td>
+      <td style = "text-align: left;">Line color for circles outlines. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linewidth::Real</td>
+      <td style = "text-align: left;">Line width for circles outlines. Default: 1.3</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linealpha::Real</td>
+      <td style = "text-align: left;">Line alpha value for circles outlines. Default: 0.5</td>
+    </tr>
+  </tbody>
+</table>
+
+```
+
+#### Why :line and :poly?
 
 !!! note
     When a small circle intersects the primitive circle outlining the resulting polygons produces visually poor results. 
@@ -318,8 +405,7 @@ h
 
 ```@example plot12
 using Stereonet
-import Makie: lines!
-import Makie: poly!
+using CairoMakie
 
 h = hemi(size=(300, 300))
 
@@ -333,67 +419,34 @@ smallc!(h, 90, 0, 30, draw=:line, color=:black, linewidth=2)
 h
 ```
 
-### Saving Plots
+## Saving Plots
 
-Stereonet uses Makie's saving functionality. The format is determined by the file extension.
+Stereonet uses Makie's saving functionality. The format is determined by the active backend and the file extension.
 
-#### Vector Formats (PDF, SVG)
-
-For publication-quality vector graphics, use CairoMakie backend:
 ```julia
 using Stereonet
-import Makie: save
+using CairoMakie, GLMakie
 
 h = hemi(size=(300, 300))
 # ... add your data ...
 
+CairoMakie.activate!()
 # Save as PDF
 save("path/to/folder/some_plot.pdf", h)
 
 # Save as SVG 
 save("path/to/folder/some_plot.svg", h)
-```
 
-#### Raster Formats (PNG)
-
-For raster images, use GLMakie backend with custom resolution:
-```julia
-using Stereonet, GLMakie
-import Makie: save
-
-h = hemi(size=(300, 300))
-# ... add your data ...
-
-# Save with default resolution
+GLMakie.activate!()
+# Save as PNG
+# Default resolution
 save("path/to/folder/some_plot.png", h)
 
-# Save with higher resolution (4x)
-save("path/to/folder/some_plot.png", h,px_per_unit = 4)
+# Higher resolution (4x)
+save("path/to/folder/some_plot.png", h, px_per_unit = 4)
 
-# Save with very high resolution (6x)
-save("path/to/folder/some_plot.png", h,px_per_unit = 6)
-```
-
-#### Backend Activation
-
-You can explicitly activate backends before saving:
-```julia
-using Stereonet
-using CairoMakie, GLMakie
-import Makie: save
-
-h = hemi(size=(300, 300))
-# ... add your data ...
-
-# For vector formats
-CairoMakie.activate!()
-
-save("path/to/folder/some_plot.pdf", h)
-save("path/to/folder/some_plot.psvg", h)
-
-# For raster formats
-GLMakie.activate!() 
-save("path/to/folder/some_plot.png", h,px_per_unit = 4)
+# Very high resolution (6x)
+save("path/to/folder/some_plot.png", h, px_per_unit = 6)
 ```
 
 !!! tip

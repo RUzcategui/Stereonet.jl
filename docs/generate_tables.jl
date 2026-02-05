@@ -34,7 +34,9 @@ end
 
 function generate_scatter_attribute_table()
     data = [
-        "form::Union{Symbol, AbstractVector{Symbol}}" "Determines whether linear features are treated as axes or vectors, choose between :a for axes and :v for vectors. Default: :a"
+        "form::Union{Symbol, AbstractVector{Symbol}}" "Determines whether linear features are treated as axes or vectors, choose between :a for axes and :v for vectors. Default: :a";
+        "color::Symbol" "Fill color of the marker. Default: :black";
+        "markersize::Real" "Size of the marker. Default: 6"
     ]
 
     html_output = pretty_table(String, data;
@@ -51,7 +53,35 @@ end
 function generate_lines_attribute_table()
     data = [
         "hemi::Symbol" "Whether to plot in the lower or upper hemisphere. Options: :lower or :upper. Default: :lower";
-        "view::Symbol" "Whether to represent planes as traces or poles. Options:trace or :pole. Default: :trace"
+        "view::Symbol" "Whether to represent planes as traces or poles. Options:trace or :pole. Default: :trace";
+        "polecolor::Symbol" "Fill color of the pole. Default: :black";
+        "polealpha::Real"  "Alpha value of the pole fill color attribute. Default: 1.0";
+        "strokecolor::Symbol" "Stroke color for pole outlines. Default: :black";
+        "strokewidth::Real" "Line width for pole outlines. Default: 0";
+        "linecolor::Symbol" "Line color for traces. Default: :black";
+        "linewidth::Real" "Line width for traces. Default: 1.3";
+        "linealpha::Real" "Line alpha value for traces. Default: 1.0"
+    ]
+
+    html_output = pretty_table(String, data;
+        backend = :html,
+        column_labels = ["Attribute", "Description"],
+        show_column_labels = true,
+        stand_alone = false,
+        alignment = [:l, :l]
+    )
+
+    return html_output
+end
+
+function generate_smallc_attribute_table()
+    data = [
+            "draw::Symbol" "Drawing mode. Options are :line (draw circles outlines) or :poly (draw filled cirles). Default is :line";
+            "fill::Symbol" "Fill color of circles. Default: :skyblue1";
+            "polyalpha::Real" "Alpha value of the fill attribute. Default: 0.3";
+            "linecolor::Symbol" "Line color for circles outlines. Default: :black";
+            "linewidth::Real" "Line width for circles outlines. Default: 1.3";
+            "linealpha::Real" "Line alpha value for circles outlines. Default: 0.5"
     ]
 
     html_output = pretty_table(String, data;
@@ -68,8 +98,9 @@ end
 function update_guide()
 
     attrs_table = generate_attributes_table()
-    lineations_table   = generate_scatter_attribute_table()
-    traces_table   = generate_lines_attribute_table()
+    lineations_table = generate_scatter_attribute_table()
+    traces_table = generate_lines_attribute_table()
+    smallc_table = generate_smallc_attribute_table()
     
     guide_path = joinpath(@__DIR__, "src", "guide_and_examples.md")
     
@@ -116,6 +147,19 @@ function update_guide()
         println("✓ Traces attribute table updated in guide_and_examples.md")
 	else
 		@warn "No <!-- TRACES_TABLE --> placeholder found in guide_and_examples.md"
+    end
+
+        # Insert smallc! attribute table
+	if contains(guide_content, "<!-- SMALLC_TABLE -->")
+		guide_content = replace(guide_content,
+			"<!-- SMALLC_TABLE -->" => """
+            ```@raw html
+			$(smallc_table)
+            \```
+		    """)
+        println("✓ Small circles attribute table updated in guide_and_examples.md")
+	else
+		@warn "No <!-- SMALLC_TABLE --> placeholder found in guide_and_examples.md"
     end
 
     # Write back to file

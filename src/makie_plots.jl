@@ -246,6 +246,8 @@ on the selected stereonet projection.
 - `form::Symbol` or `AbstractVector{Symbol}`: Whether linear features are treated 
   as axes or vectors. Use `:a` to plot lines as axes or `:v` to plot lines as 
   vectors. Default is `:a`.
+- `color::Symbol`: Fill color of the marker. Default is `:black`.
+- `markersize::Real`: Size of the marker. Default is `6`.
 - `kwargs...`: Additional keyword arguments passed to Makie's `scatter!`.
 
 # Returns
@@ -466,13 +468,13 @@ single closed curve or as two separate curve segments.
 - `angle::Real` or `AbstractVector{<:Real}`: Cone opening angle(s) in degrees.
 
 # Keyword Arguments
-- `draw::Symbol`: Drawing mode. Options are `:line` (draw curve(s)) or `:poly` 
-  (draw filled polygon(s)). Default is `:line`.
-- `fill::Symbol`: Color of the polygon. Default is `:skyblue1`.
+- `draw::Symbol`: Drawing mode. Options are `:line` (draw circles outlines) or `:poly` 
+  (draw filled cirles). Default is `:line`.
+- `fill::Symbol`: Fill color of circles. Default is `:skyblue1`.
 - `polyalpha::Real`: Alpha value of the fill attribute. Default is `0.3`.
-- `linecolor::Symbol`: Line color for outlines. Default is `:black`.
-- `linewidth::Real`: Line width for outlines. Default is `1.3`.
-- `linealpha::Real`: Line alpha value for outlines. Default is `0.5`.
+- `linecolor::Symbol`: Line color for circles outlines. Default is `:black`.
+- `linewidth::Real`: Line width for circles outlines. Default is `1.3`.
+- `linealpha::Real`: Line alpha value for circles outlines. Default is `0.5`.
 - `kwargs...`: Additional keyword arguments passed to Makie.
 
 # Returns
