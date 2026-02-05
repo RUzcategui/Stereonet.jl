@@ -1,6 +1,15 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>User Guide and Examples · Stereonet.jl</title><meta name="title" content="User Guide and Examples · Stereonet.jl"/><meta property="og:title" content="User Guide and Examples · Stereonet.jl"/><meta property="twitter:title" content="User Guide and Examples · Stereonet.jl"/><meta name="description" content="Documentation for Stereonet.jl."/><meta property="og:description" content="Documentation for Stereonet.jl."/><meta property="twitter:description" content="Documentation for Stereonet.jl."/><meta property="og:url" content="https://RUzcategui.github.io/Stereonet.jl/guide_and_examples/"/><meta property="twitter:url" content="https://RUzcategui.github.io/Stereonet.jl/guide_and_examples/"/><link rel="canonical" href="https://RUzcategui.github.io/Stereonet.jl/guide_and_examples/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">Stereonet.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>User Guide and Examples</a><ul class="internal"><li><a class="tocitem" href="#User-Guide"><span>User Guide</span></a></li></ul></li><li><a class="tocitem" href="../future_work/">Work in progress and future directions</a></li><li><a class="tocitem" href="../api/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>User Guide and Examples</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>User Guide and Examples</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/RUzcategui/Stereonet.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/RUzcategui/Stereonet.jl/blob/main/docs/src/guide_and_examples.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h2 id="User-Guide"><a class="docs-heading-anchor" href="#User-Guide">User Guide</a><a id="User-Guide-1"></a><a class="docs-heading-anchor-permalink" href="#User-Guide" title="Permalink"></a></h2><h3 id="Creating-a-Stereonet"><a class="docs-heading-anchor" href="#Creating-a-Stereonet">Creating a Stereonet</a><a id="Creating-a-Stereonet-1"></a><a class="docs-heading-anchor-permalink" href="#Creating-a-Stereonet" title="Permalink"></a></h3><p>Create a stereonet with default attributes:</p><pre><code class="language-julia hljs">using Stereonet
-h = hemi(size=(300, 300))</code></pre><img src="1f0229dd.svg" alt="Example block output"/><h4 id="Grid-and-Frame-Attributes"><a class="docs-heading-anchor" href="#Grid-and-Frame-Attributes">Grid and Frame Attributes</a><a id="Grid-and-Frame-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Grid-and-Frame-Attributes" title="Permalink"></a></h4><p>Attributes are defined as keyword arguments. The following table describes each attribute:</p><table>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>User Guide and Examples · Stereonet.jl</title><meta name="title" content="User Guide and Examples · Stereonet.jl"/><meta property="og:title" content="User Guide and Examples · Stereonet.jl"/><meta property="twitter:title" content="User Guide and Examples · Stereonet.jl"/><meta name="description" content="Documentation for Stereonet.jl."/><meta property="og:description" content="Documentation for Stereonet.jl."/><meta property="twitter:description" content="Documentation for Stereonet.jl."/><meta property="og:url" content="https://RUzcategui.github.io/Stereonet.jl/guide_and_examples/"/><meta property="twitter:url" content="https://RUzcategui.github.io/Stereonet.jl/guide_and_examples/"/><link rel="canonical" href="https://RUzcategui.github.io/Stereonet.jl/guide_and_examples/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">Stereonet.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>User Guide and Examples</a><ul class="internal"><li><a class="tocitem" href="#Backend-Activation"><span>Backend Activation</span></a></li><li><a class="tocitem" href="#Creating-a-Stereonet"><span>Creating a Stereonet</span></a></li><li><a class="tocitem" href="#Grid-and-Frame-Attributes"><span>Grid and Frame Attributes</span></a></li><li><a class="tocitem" href="#Net-view-direction"><span>Net view direction</span></a></li><li><a class="tocitem" href="#Plotting-Linear-Features"><span>Plotting Linear Features</span></a></li><li><a class="tocitem" href="#Linear-Features-Attributes"><span>Linear Features Attributes</span></a></li><li><a class="tocitem" href="#Plotting-Planar-Features"><span>Plotting Planar Features</span></a></li><li><a class="tocitem" href="#Planar-Features-Attributes"><span>Planar Features Attributes</span></a></li><li><a class="tocitem" href="#Small-Circles"><span>Small Circles</span></a></li><li><a class="tocitem" href="#Small-Circles-Features-Attributes"><span>Small Circles Features Attributes</span></a></li><li><a class="tocitem" href="#Saving-Plots"><span>Saving Plots</span></a></li></ul></li><li><a class="tocitem" href="../future_work/">Work in progress and future directions</a></li><li><a class="tocitem" href="../api/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>User Guide and Examples</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>User Guide and Examples</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/RUzcategui/Stereonet.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/RUzcategui/Stereonet.jl/blob/main/docs/src/guide_and_examples.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h2 id="Backend-Activation"><a class="docs-heading-anchor" href="#Backend-Activation">Backend Activation</a><a id="Backend-Activation-1"></a><a class="docs-heading-anchor-permalink" href="#Backend-Activation" title="Permalink"></a></h2><p>Remember to call a specific backend to render your plots:</p><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie, GLMakie
+
+CairoMakie.activate!()
+# plot and save with CairoMakie
+
+GLMakie.activate!()
+# plot and save with GLMakie</code></pre><h2 id="Creating-a-Stereonet"><a class="docs-heading-anchor" href="#Creating-a-Stereonet">Creating a Stereonet</a><a id="Creating-a-Stereonet-1"></a><a class="docs-heading-anchor-permalink" href="#Creating-a-Stereonet" title="Permalink"></a></h2><p>Create a stereonet with default attributes:</p><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie
+
+h = hemi(size=(300, 300))</code></pre><img src="1f0229dd.svg" alt="Example block output"/><h2 id="Grid-and-Frame-Attributes"><a class="docs-heading-anchor" href="#Grid-and-Frame-Attributes">Grid and Frame Attributes</a><a id="Grid-and-Frame-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Grid-and-Frame-Attributes" title="Permalink"></a></h2><p>Attributes are defined as keyword arguments. The following table describes each attribute:</p><table>
   <thead>
     <tr class = "columnLabelRow">
       <th style = "font-weight: bold; text-align: left;">Attribute</th>
@@ -70,8 +79,8 @@ h = hemi(size=(300, 300))</code></pre><img src="1f0229dd.svg" alt="Example block
     </tr>
   </tbody>
 </table>
-<h4 id="Net-view-direction"><a class="docs-heading-anchor" href="#Net-view-direction">Net view direction</a><a id="Net-view-direction-1"></a><a class="docs-heading-anchor-permalink" href="#Net-view-direction" title="Permalink"></a></h4><p>Nets are usually displayed with the primitive oriented horizontally (viewed from above). With the attribute view, a net can be generated from any desired direction:</p><pre><code class="language-julia hljs">using Stereonet
-
+<h2 id="Net-view-direction"><a class="docs-heading-anchor" href="#Net-view-direction">Net view direction</a><a id="Net-view-direction-1"></a><a class="docs-heading-anchor-permalink" href="#Net-view-direction" title="Permalink"></a></h2><p>Nets are usually displayed with the primitive oriented horizontally (viewed from above). With the attribute view, a net can be generated from any desired direction:</p><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie
 h = hemi(
     net = :schmidt,
     view = (30, 20),
@@ -80,8 +89,8 @@ h = hemi(
     frame = :show,
     grid_color=:deepskyblue2,
     grid_linestyle=:solid
-)</code></pre><img src="631aa334.svg" alt="Example block output"/><h3 id="Plotting-Linear-Features"><a class="docs-heading-anchor" href="#Plotting-Linear-Features">Plotting Linear Features</a><a id="Plotting-Linear-Features-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Linear-Features" title="Permalink"></a></h3><p>Linear features are plotted using <code>lineations!</code>:</p><pre><code class="language-julia hljs">using Stereonet
-import Makie: scatter!
+)</code></pre><img src="631aa334.svg" alt="Example block output"/><h2 id="Plotting-Linear-Features"><a class="docs-heading-anchor" href="#Plotting-Linear-Features">Plotting Linear Features</a><a id="Plotting-Linear-Features-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Linear-Features" title="Permalink"></a></h2><p>Linear features are plotted using <code>lineations!</code>:</p><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie
 
 h = hemi(net = :schmidt, size=(300, 300))
 lineations!(h, 300, 20)  # trend=300°, plunge=20°
@@ -89,7 +98,7 @@ lineations!(h, [50], [0], marker = :rect,
         markersize = 11, color = :yellow1)
 lineations!(h, [220, 180, 140], [50, 50, 50], marker = :xcross,
         markersize = 13, color = :green)
-h</code></pre><img src="57c0c473.svg" alt="Example block output"/><h4 id="Linear-Features-Attributes"><a class="docs-heading-anchor" href="#Linear-Features-Attributes">Linear Features Attributes</a><a id="Linear-Features-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Linear-Features-Attributes" title="Permalink"></a></h4><p>The <code>lineations!</code> function accepts standard Makie <code>scatter!</code> attributes plus one special attribute:</p><table>
+h</code></pre><img src="57c0c473.svg" alt="Example block output"/><h2 id="Linear-Features-Attributes"><a class="docs-heading-anchor" href="#Linear-Features-Attributes">Linear Features Attributes</a><a id="Linear-Features-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Linear-Features-Attributes" title="Permalink"></a></h2><p><code>lineations!</code> attributes are defined as keyword arguments. The following table describes each attribute:</p><table>
   <thead>
     <tr class = "columnLabelRow">
       <th style = "font-weight: bold; text-align: left;">Attribute</th>
@@ -101,21 +110,29 @@ h</code></pre><img src="57c0c473.svg" alt="Example block output"/><h4 id="Linear
       <td style = "text-align: left;">form::Union{Symbol, AbstractVector{Symbol}}</td>
       <td style = "text-align: left;">Determines whether linear features are treated as axes or vectors, choose between :a for axes and :v for vectors. Default: :a</td>
     </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">color::Symbol</td>
+      <td style = "text-align: left;">Fill color of the marker. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">markersize::Real</td>
+      <td style = "text-align: left;">Size of the marker. Default: 6</td>
+    </tr>
   </tbody>
 </table>
-<div class="admonition is-info" id="Note-2f213341f998ddb4"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-2f213341f998ddb4" title="Permalink"></a></header><div class="admonition-body"><p>For linear data, hemisphere selection is encoded in the orientation itself. Plunge sign and form control whether antipodal directions are distinguished:</p></div></div><p><strong>Behavior with positive plunge (downward):</strong></p><ul><li>Both <code>:a</code> and <code>:v</code> plot the point at the same location on the lower hemisphere</li></ul><pre><code class="language-julia hljs">using Stereonet
-import Makie: scatter!
+<div class="admonition is-info" id="Note-2f213341f998ddb4"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-2f213341f998ddb4" title="Permalink"></a></header><div class="admonition-body"><p>For linear data, hemisphere selection is encoded in the orientation itself. Plunge sign and form control whether antipodal directions are distinguished:</p></div></div><h5 id="Behavior-with-positive-plunge-(downward):"><a class="docs-heading-anchor" href="#Behavior-with-positive-plunge-(downward):">Behavior with positive plunge (downward):</a><a id="Behavior-with-positive-plunge-(downward):-1"></a><a class="docs-heading-anchor-permalink" href="#Behavior-with-positive-plunge-(downward):" title="Permalink"></a></h5><ul><li>Both <code>:a</code> and <code>:v</code> plot the point at the same location on the lower hemisphere</li></ul><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
 lineations!(h, [90, 90], [45, 45], form = [:v, :a], color = :red)
-h</code></pre><img src="355f1c0e.svg" alt="Example block output"/><p><strong>Behavior with negative plunge (upward):</strong></p><ul><li><code>:a</code> (axis): Plots the antipode point on the lower hemisphere</li><li><code>:v</code> (vector): Plots the point on the upper hemisphere</li></ul><pre><code class="language-julia hljs">using Stereonet
-import Makie: scatter!
+h</code></pre><img src="355f1c0e.svg" alt="Example block output"/><h5 id="Behavior-with-negative-plunge-(upward):"><a class="docs-heading-anchor" href="#Behavior-with-negative-plunge-(upward):">Behavior with negative plunge (upward):</a><a id="Behavior-with-negative-plunge-(upward):-1"></a><a class="docs-heading-anchor-permalink" href="#Behavior-with-negative-plunge-(upward):" title="Permalink"></a></h5><ul><li><code>:a</code> (axis): Plots the antipode point on the lower hemisphere</li><li><code>:v</code> (vector): Plots the point on the upper hemisphere</li></ul><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie
 
 h = hemi(net=:wulff, view=(0, 90), size=(300, 300))
 lineations!(h, [90], [-45], form = [:a], color = :green)
 lineations!(h, [90], [-45], form = [:v], color = :red)
 h</code></pre><img src="6f890c10.svg" alt="Example block output"/><div class="admonition is-info" id="Note-86866c57781a1ceb"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-86866c57781a1ceb" title="Permalink"></a></header><div class="admonition-body"><p>When using :v with negative plunge, you may want to distinguish between lower and upper hemisphere points. One approach is to use hollow markers:</p></div></div><pre><code class="language-julia hljs">using Stereonet
-import Makie: scatter!
+using CairoMakie
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
 lineations!(h, 270, -20, form = :v,
@@ -125,7 +142,7 @@ lineations!(h, 270, -20, form = :v,
             markersize = 15,
             strokecolor = :blue)
 h</code></pre><img src="d40cb130.svg" alt="Example block output"/><pre><code class="nohighlight hljs">See discussion: [Markers without fill in Makie.jl](https://discourse.julialang.org/t/how-to-have-markers-without-fill-color-in-makie-jl/88698)</code></pre><h5 id="Different-Form-for-Each-Point"><a class="docs-heading-anchor" href="#Different-Form-for-Each-Point">Different Form for Each Point</a><a id="Different-Form-for-Each-Point-1"></a><a class="docs-heading-anchor-permalink" href="#Different-Form-for-Each-Point" title="Permalink"></a></h5><pre><code class="language-julia hljs">using Stereonet
-import Makie: scatter!
+using CairoMakie
 
 trends = [0.0, 45.0, 90.0, 135.0]
 plunges = [15.0, 30.0, -45.0, -60.0]
@@ -134,20 +151,20 @@ forms = [:a, :v, :a, :v]
 h = hemi(size=(300, 300))
 lineations!(h, trends, plunges, form=forms)
 h</code></pre><img src="ab49b9a1.svg" alt="Example block output"/><h5 id="Same-Form-for-All-Points"><a class="docs-heading-anchor" href="#Same-Form-for-All-Points">Same Form for All Points</a><a id="Same-Form-for-All-Points-1"></a><a class="docs-heading-anchor-permalink" href="#Same-Form-for-All-Points" title="Permalink"></a></h5><pre><code class="language-julia hljs">using Stereonet
-import Makie: scatter!
+using CairoMakie
 
 trends = [0.0, 45.0, 90.0, 135.0]
 plunges = [15.0, 30.0, -45.0, -60.0]
 
 h = hemi(size=(300, 300))
 lineations!(h, trends, plunges, form=:v)
-h</code></pre><img src="ee569d4e.svg" alt="Example block output"/><h3 id="Plotting-Planar-Features"><a class="docs-heading-anchor" href="#Plotting-Planar-Features">Plotting Planar Features</a><a id="Plotting-Planar-Features-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Planar-Features" title="Permalink"></a></h3><p>Planar features are plotted using <code>traces!</code>:</p><pre><code class="language-julia hljs">using Stereonet
-import Makie: lines!
+h</code></pre><img src="ee569d4e.svg" alt="Example block output"/><h2 id="Plotting-Planar-Features"><a class="docs-heading-anchor" href="#Plotting-Planar-Features">Plotting Planar Features</a><a id="Plotting-Planar-Features-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Planar-Features" title="Permalink"></a></h2><p>Planar features are plotted using <code>traces!</code>:</p><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie
 
 h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
 traces!(h, 120, 45)  # strike=120°, dip=45°
 traces!(h, [250], [70], color=:darkgreen, linestyle= (:dashdot, :dense), linewidth=2)
-h</code></pre><img src="0b8995fa.svg" alt="Example block output"/><h4 id="Planar-Features-Attributes"><a class="docs-heading-anchor" href="#Planar-Features-Attributes">Planar Features Attributes</a><a id="Planar-Features-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Planar-Features-Attributes" title="Permalink"></a></h4><p>The <code>traces!</code> function accepts standard Makie <code>lines!</code> attributes plus two special attribute:</p><table>
+h</code></pre><img src="0b8995fa.svg" alt="Example block output"/><h2 id="Planar-Features-Attributes"><a class="docs-heading-anchor" href="#Planar-Features-Attributes">Planar Features Attributes</a><a id="Planar-Features-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Planar-Features-Attributes" title="Permalink"></a></h2><p><code>traces!</code> attributes are defined as keyword arguments. The following table describes each attribute:</p><table>
   <thead>
     <tr class = "columnLabelRow">
       <th style = "font-weight: bold; text-align: left;">Attribute</th>
@@ -163,10 +180,38 @@ h</code></pre><img src="0b8995fa.svg" alt="Example block output"/><h4 id="Planar
       <td style = "text-align: left;">view::Symbol</td>
       <td style = "text-align: left;">Whether to represent planes as traces or poles. Options:trace or :pole. Default: :trace</td>
     </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">polecolor::Symbol</td>
+      <td style = "text-align: left;">Fill color of the pole. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">polealpha::Real</td>
+      <td style = "text-align: left;">Alpha value of the pole fill color attribute. Default: 1.0</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">strokecolor::Symbol</td>
+      <td style = "text-align: left;">Stroke color for pole outlines. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">strokewidth::Real</td>
+      <td style = "text-align: left;">Line width for pole outlines. Default: 0</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linecolor::Symbol</td>
+      <td style = "text-align: left;">Line color for traces. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linewidth::Real</td>
+      <td style = "text-align: left;">Line width for traces. Default: 1.3</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linealpha::Real</td>
+      <td style = "text-align: left;">Line alpha value for traces. Default: 1.0</td>
+    </tr>
   </tbody>
 </table>
 <div class="admonition is-info" id="Note-bc9b8bc08ae57da5"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-bc9b8bc08ae57da5" title="Permalink"></a></header><div class="admonition-body"><p>Plane traces are invariant under hemisphere–dip sign changes; for example, (dipdir, dip, hemi = :upper) and (dipdir, -dip, hemi = :lower) produce identical great-circle traces.</p></div></div><h4 id="Example:-Multiple-Planes"><a class="docs-heading-anchor" href="#Example:-Multiple-Planes">Example: Multiple Planes</a><a id="Example:-Multiple-Planes-1"></a><a class="docs-heading-anchor-permalink" href="#Example:-Multiple-Planes" title="Permalink"></a></h4><pre><code class="language-julia hljs">using Stereonet
-import Makie: lines!
+using CairoMakie
 
 h = hemi(size=(300, 300))
 
@@ -178,9 +223,8 @@ for (strike, dip) in zip(strikes, dips)
     traces!(h, strikes, dips, color=:green, linewidth=1)
     traces!(h, strikes, dips, color=:green, view=:pole)
 end
-h</code></pre><img src="f0de361a.svg" alt="Example block output"/><h3 id="Small-Circles"><a class="docs-heading-anchor" href="#Small-Circles">Small Circles</a><a id="Small-Circles-1"></a><a class="docs-heading-anchor-permalink" href="#Small-Circles" title="Permalink"></a></h3><p>Small circles are conical sections on a sphere, defined by the axis trend and plunge, and the cone’s half-angle.</p><h4 id="Small-Circles-2"><a class="docs-heading-anchor" href="#Small-Circles-2">Small Circles</a><a class="docs-heading-anchor-permalink" href="#Small-Circles-2" title="Permalink"></a></h4><pre><code class="language-julia hljs">using Stereonet
-import Makie: lines!
-import Makie: poly!
+h</code></pre><img src="f0de361a.svg" alt="Example block output"/><h2 id="Small-Circles"><a class="docs-heading-anchor" href="#Small-Circles">Small Circles</a><a id="Small-Circles-1"></a><a class="docs-heading-anchor-permalink" href="#Small-Circles" title="Permalink"></a></h2><p>Small circles are conical sections on a sphere, defined by the axis trend and plunge, and the cone’s half-angle.</p><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie
 
 h = hemi(size=(300, 300))
 
@@ -193,9 +237,42 @@ trends = [45, 135]
 plunges = [15, 5]
 half_angles = [15, 15]
 smallc!(h, trends, plunges, half_angles, draw=:poly, color=:skyblue)
-h</code></pre><img src="762b433c.svg" alt="Example block output"/><h4 id="Why-:line-and-:poly"><a class="docs-heading-anchor" href="#Why-:line-and-:poly">Why :line and :poly</a><a id="Why-:line-and-:poly-1"></a><a class="docs-heading-anchor-permalink" href="#Why-:line-and-:poly" title="Permalink"></a></h4><div class="admonition is-info" id="Note-92d4cb932ab0390e"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-92d4cb932ab0390e" title="Permalink"></a></header><div class="admonition-body"><p>When a small circle intersects the primitive circle outlining the resulting polygons produces visually poor results.  The :line option avoids this by allowing the trace to terminate cleanly at the primitive circle. </p></div></div><pre><code class="language-julia hljs">using Stereonet
-import Makie: lines!
-import Makie: poly!
+h</code></pre><img src="762b433c.svg" alt="Example block output"/><h2 id="Small-Circles-Features-Attributes"><a class="docs-heading-anchor" href="#Small-Circles-Features-Attributes">Small Circles Features Attributes</a><a id="Small-Circles-Features-Attributes-1"></a><a class="docs-heading-anchor-permalink" href="#Small-Circles-Features-Attributes" title="Permalink"></a></h2><p><code>smallc!</code> attributes are defined as keyword arguments. The following table describes each attribute:</p><table>
+  <thead>
+    <tr class = "columnLabelRow">
+      <th style = "font-weight: bold; text-align: left;">Attribute</th>
+      <th style = "font-weight: bold; text-align: left;">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">draw::Symbol</td>
+      <td style = "text-align: left;">Drawing mode. Options are :line (draw circles outlines) or :poly (draw filled cirles). Default is :line</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">fill::Symbol</td>
+      <td style = "text-align: left;">Fill color of circles. Default: :skyblue1</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">polyalpha::Real</td>
+      <td style = "text-align: left;">Alpha value of the fill attribute. Default: 0.3</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linecolor::Symbol</td>
+      <td style = "text-align: left;">Line color for circles outlines. Default: :black</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linewidth::Real</td>
+      <td style = "text-align: left;">Line width for circles outlines. Default: 1.3</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: left;">linealpha::Real</td>
+      <td style = "text-align: left;">Line alpha value for circles outlines. Default: 0.5</td>
+    </tr>
+  </tbody>
+</table>
+<h4 id="Why-:line-and-:poly?"><a class="docs-heading-anchor" href="#Why-:line-and-:poly?">Why :line and :poly?</a><a id="Why-:line-and-:poly?-1"></a><a class="docs-heading-anchor-permalink" href="#Why-:line-and-:poly?" title="Permalink"></a></h4><div class="admonition is-info" id="Note-92d4cb932ab0390e"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-92d4cb932ab0390e" title="Permalink"></a></header><div class="admonition-body"><p>When a small circle intersects the primitive circle outlining the resulting polygons produces visually poor results.  The :line option avoids this by allowing the trace to terminate cleanly at the primitive circle. </p></div></div><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie
 
 h = hemi(size=(300, 300))
 
@@ -206,42 +283,26 @@ smallc!(h, 0, 0, 30, draw=:poly, color=:bisque, strokecolor=:black, strokewidth=
 smallc!(h, 90, 0, 30, draw=:poly, color=:bisque)
 smallc!(h, 90, 0, 30, draw=:line, color=:black, linewidth=2)
 
-h</code></pre><img src="816a966b.svg" alt="Example block output"/><h3 id="Saving-Plots"><a class="docs-heading-anchor" href="#Saving-Plots">Saving Plots</a><a id="Saving-Plots-1"></a><a class="docs-heading-anchor-permalink" href="#Saving-Plots" title="Permalink"></a></h3><p>Stereonet uses Makie&#39;s saving functionality. The format is determined by the file extension.</p><h4 id="Vector-Formats-(PDF,-SVG)"><a class="docs-heading-anchor" href="#Vector-Formats-(PDF,-SVG)">Vector Formats (PDF, SVG)</a><a id="Vector-Formats-(PDF,-SVG)-1"></a><a class="docs-heading-anchor-permalink" href="#Vector-Formats-(PDF,-SVG)" title="Permalink"></a></h4><p>For publication-quality vector graphics, use CairoMakie backend:</p><pre><code class="language-julia hljs">using Stereonet
-import Makie: save
+h</code></pre><img src="816a966b.svg" alt="Example block output"/><h2 id="Saving-Plots"><a class="docs-heading-anchor" href="#Saving-Plots">Saving Plots</a><a id="Saving-Plots-1"></a><a class="docs-heading-anchor-permalink" href="#Saving-Plots" title="Permalink"></a></h2><p>Stereonet uses Makie&#39;s saving functionality. The format is determined by the active backend and the file extension.</p><pre><code class="language-julia hljs">using Stereonet
+using CairoMakie, GLMakie
 
 h = hemi(size=(300, 300))
 # ... add your data ...
 
+CairoMakie.activate!()
 # Save as PDF
 save(&quot;path/to/folder/some_plot.pdf&quot;, h)
 
 # Save as SVG 
-save(&quot;path/to/folder/some_plot.svg&quot;, h)</code></pre><h4 id="Raster-Formats-(PNG)"><a class="docs-heading-anchor" href="#Raster-Formats-(PNG)">Raster Formats (PNG)</a><a id="Raster-Formats-(PNG)-1"></a><a class="docs-heading-anchor-permalink" href="#Raster-Formats-(PNG)" title="Permalink"></a></h4><p>For raster images, use GLMakie backend with custom resolution:</p><pre><code class="language-julia hljs">using Stereonet, GLMakie
-import Makie: save
+save(&quot;path/to/folder/some_plot.svg&quot;, h)
 
-h = hemi(size=(300, 300))
-# ... add your data ...
-
-# Save with default resolution
+GLMakie.activate!()
+# Save as PNG
+# Default resolution
 save(&quot;path/to/folder/some_plot.png&quot;, h)
 
-# Save with higher resolution (4x)
-save(&quot;path/to/folder/some_plot.png&quot;, h,px_per_unit = 4)
+# Higher resolution (4x)
+save(&quot;path/to/folder/some_plot.png&quot;, h, px_per_unit = 4)
 
-# Save with very high resolution (6x)
-save(&quot;path/to/folder/some_plot.png&quot;, h,px_per_unit = 6)</code></pre><h4 id="Backend-Activation"><a class="docs-heading-anchor" href="#Backend-Activation">Backend Activation</a><a id="Backend-Activation-1"></a><a class="docs-heading-anchor-permalink" href="#Backend-Activation" title="Permalink"></a></h4><p>You can explicitly activate backends before saving:</p><pre><code class="language-julia hljs">using Stereonet
-using CairoMakie, GLMakie
-import Makie: save
-
-h = hemi(size=(300, 300))
-# ... add your data ...
-
-# For vector formats
-CairoMakie.activate!()
-
-save(&quot;path/to/folder/some_plot.pdf&quot;, h)
-save(&quot;path/to/folder/some_plot.psvg&quot;, h)
-
-# For raster formats
-GLMakie.activate!() 
-save(&quot;path/to/folder/some_plot.png&quot;, h,px_per_unit = 4)</code></pre><div class="admonition is-success" id="Tip-74c6fa4138c4c534"><header class="admonition-header">Tip<a class="admonition-anchor" href="#Tip-74c6fa4138c4c534" title="Permalink"></a></header><div class="admonition-body"><ul><li>Use <strong>PDF or SVG</strong> for publications and presentations (scalable, no quality loss)</li><li>Use <strong>PNG</strong> for web pages and quick previews</li><li>Increase <code>px_per_unit</code> for higher resolution PNGs (values of 2-6 work well)</li><li>Default size is 600×600 pixels; change with <code>size=(width, height)</code> in <code>hemi()</code></li></ul></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../future_work/">Work in progress and future directions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Wednesday 4 February 2026 23:19">Wednesday 4 February 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+# Very high resolution (6x)
+save(&quot;path/to/folder/some_plot.png&quot;, h, px_per_unit = 6)</code></pre><div class="admonition is-success" id="Tip-74c6fa4138c4c534"><header class="admonition-header">Tip<a class="admonition-anchor" href="#Tip-74c6fa4138c4c534" title="Permalink"></a></header><div class="admonition-body"><ul><li>Use <strong>PDF or SVG</strong> for publications and presentations (scalable, no quality loss)</li><li>Use <strong>PNG</strong> for web pages and quick previews</li><li>Increase <code>px_per_unit</code> for higher resolution PNGs (values of 2-6 work well)</li><li>Default size is 600×600 pixels; change with <code>size=(width, height)</code> in <code>hemi()</code></li></ul></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../future_work/">Work in progress and future directions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Thursday 5 February 2026 14:02">Thursday 5 February 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
