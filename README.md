@@ -1,7 +1,5 @@
 # Stereonet.jl
 
-# Stereonet.jl
-
 [![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://ruzcategui.github.io/Stereonet.jl/)
 
 A Julia package for plotting orientation data on stereonets using Makie.
