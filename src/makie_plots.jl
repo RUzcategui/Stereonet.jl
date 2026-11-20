@@ -355,7 +355,7 @@ function _check_interactive_backend()
         # Detect if an integrated graphical environment (VS Code, IJulia, Pluto, etc.) is active
         # Excludes REPL, TextDisplay, and Makie's external image viewer display
         has_integrated_display = any(Base.Multimedia.displays) do d
-            !(d isa REPL.REPLDisplay || d isa TextDisplay || parentmodule(typeof(d)) === Makie)
+            !(d isa REPL.REPLDisplay || d isa TextDisplay || nameof(parentmodule(typeof(d))) === :Makie)
         end
         if !has_integrated_display
             @warn """

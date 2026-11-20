@@ -71,7 +71,9 @@ function line_coordinates(t, p, net::Symbol, view::Tuple{<:Real,<:Real}, acor::R
     for i in eachindex(tv)
         v = vec(cartesian_coords(tv[i],pv[i]))
         v = change_view_direction(v,view,acor; reproject=(forms[i] === :a))
-		if form==:v && v[3] < 0
+		println([3])
+		println(form)
+		if forms[i] === :v && v[3] < 0
 			v[3] = -v[3]
 		end
         push!(result, project(reshape(v,1,3), :lower))
