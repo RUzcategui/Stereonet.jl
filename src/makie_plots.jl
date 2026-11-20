@@ -8,33 +8,26 @@ mutable struct GridAttributes
     sstep::Int
     gstep::Int
     acor::Real
-    grid_color::Symbol
-    grid_linestyle::Symbol
+    grid_color::Any
+    grid_linestyle::Any
     grid_linewidth::Real
     grid_alpha::Real
     size::Tuple{Int,Int}
-    ticks::Symbol        # :show | :hide
-    tstep::Int           # angular spacing
-    tlen::Real           # tick length
-
-    function GridAttributes(;
-        view::Tuple{Real,Real}=(0,90), 
-        grid::Symbol=:show, 
-        frame::Symbol=:show, 
-        net::Symbol=:wulff, 
-        sstep::Int=10, 
-        gstep::Int=10, 
-        acor::Real=0, 
-        grid_color::Symbol=:gray,
-        grid_linestyle::Symbol=:dash, 
-        grid_linewidth::Real=0.5, 
-        grid_alpha::Real=1.0, 
-        size::Tuple{Int,Int} = (600,600),
-        ticks::Symbol=:show,
-        tstep::Int=10, # Try to use only: [10, 30, 45, 90]
-        tlen::Real=0.015
-    )
-        new(view, grid, frame, net, sstep, gstep, acor, grid_color, grid_linestyle, grid_linewidth, grid_alpha, size, ticks, tstep, tlen)
+    ticks::Symbol
+    tstep::Int
+    tlen::Real
+    function GridAttributes(;view=(0,90),grid=:show,frame=:show,net=:wulff,
+        sstep=10,gstep=10,acor=0,grid_color=:gray,grid_linestyle=:dash,
+        grid_linewidth=0.5,grid_alpha=1.0,size=(600,600),ticks=:deg,
+        tstep=10,tlen=0.015)
+        view isa Tuple && length(view)==2 || throw(ArgumentError("view must be (trend, plunge)"))
+        grid in (:show,:hide) || throw(ArgumentError("grid must be :show or :hide"))
+        frame in (:show,:hide) || throw(ArgumentError("frame must be :show or :hide"))
+        net in (:wulff,:schmidt) || throw(ArgumentError("net must be :wulff or :schmidt"))
+        ticks in (:deg,:car,:hide) || throw(ArgumentError("ticks must be :deg for degress, :car for cardinals or :hide"))
+        sstep>0 && gstep>0 && tstep>0 || throw(ArgumentError("angular steps must be positive"))
+        new(view,grid,frame,net,sstep,gstep,acor,grid_color,grid_linestyle,
+            grid_linewidth,grid_alpha,(round(Int,size[1]),round(Int,size[2])),ticks,tstep,tlen)
     end
 end
 
@@ -44,102 +37,87 @@ mutable struct HemiPlot <: AbstractStereonet
     att::GridAttributes
 end
 
-function draw_hemi!(hp::HemiPlot)
-  ax = hp.ax
-  att = hp.att
+function radial_ticks_coords(step::Int;r0=1.0,len=0.05)
+    step > 0 && 360 % step == 0 || throw(ArgumentError("step must be a positive divisor of 360"))
+    θs = 0:step:(360-step)
+    starts = Matrix{Float64}(undef,length(θs),2)
+    ends = similar(starts)
+    for (i,θ) in enumerate(θs)
+        x,y = cosd(θ),sind(θ)
+        starts[i,:] .= (r0*x,r0*y)
+        ends[i,:] .= ((r0+len)*x,(r0+len)*y)
+    end
+    return starts,ends
+end
 
-    if att.ticks == :show # Modify this use :deg to display degrees, :car to display cardinals or :nothing
-        rlab = 1.08  # distance from center
-        for θ in 0:att.tstep:(360 - att.tstep)
-            θ_tick = θ
-            θ_rot = θ_tick + att.view[1] + att.acor  # tick rotation
-
-            # label text (reversed clockwise)
-            label_angle = mod(360 - θ_tick, 360)
-
-            # label position shifted 90° anticlockwise around circle
-            θ_label_pos = θ_rot + 90
-            x, y = cosd(θ_label_pos), sind(θ_label_pos)
-            pos = Point2f(rlab * x, rlab * y)
-
-            # text rotation perpendicular to tick (optional)
-            rot = deg2rad(θ_rot) - π/2
-            if π/2 < rot < 3π/2
-                rot += π
-            end
-
-            text!(ax, string(label_angle, "°"),
-                position = pos,
-                rotation = rot,
-                align = (:center, :center),
-                fontsize = 12,
-                color = att.grid_color)
+function draw_hemi!(h::HemiPlot)
+    ax,att = h.ax,h.att
+    if att.frame===:hide && att.grid===:show
+        @warn "grid cannot be :show when frame is :hide; hiding grid"
+        att.grid=:hide
+    end
+	
+	if att.ticks===:car && att.view[2]==90
+		att.tstep = 90
+        label_card = ["N", "W", "S", "E"]
+		for (i, θ) in enumerate(0:att.tstep:(360-att.tstep))
+			θrot = θ + att.view[1] + att.acor
+			x, y = cosd(θrot + 90), sind(θrot + 90)
+			rot = deg2rad(θrot) - π/2
+			π/2 < mod(rot, 2π) < 3π/2 && (rot += π)
+			text!(ax, label_card[i], position = Point2f(1.08x, 1.08y),
+			   align = (:center, :center), fontsize = 12, color = att.grid_color)
+		end
+    end
+	 
+    if att.ticks===:deg && att.view[2]==90
+	 
+        starts,ends = radial_ticks_coords(att.tstep;len=att.tlen)
+        pts = Point2f[]
+        for i in axes(starts,1)
+            push!(pts,Point2f(starts[i,1],starts[i,2]),Point2f(ends[i,1],ends[i,2]))
+        end
+        linesegments!(ax,pts;color=att.grid_color,linewidth=att.grid_linewidth,alpha=att.grid_alpha)
+        for θ in 0:att.tstep:(360-att.tstep)
+            θrot=θ+att.view[1]+att.acor
+            label_angle=mod(360-θ,360)
+            x,y=cosd(θrot+90),sind(θrot+90)
+            rot=deg2rad(θrot)-π/2
+            π/2<mod(rot,2π)<3π/2 && (rot+=π)
+            text!(ax,string(label_angle,"°"),position=Point2f(1.08x,1.08y),
+                  rotation=rot,align=(:center,:center),fontsize=12,color=att.grid_color)
         end
     end
 
+    lines!(ax,Circle(Point2f(0,0),1);color=att.grid_color,
+           linewidth=att.grid_linewidth,linestyle=att.grid_linestyle,alpha=att.grid_alpha)
 
-  if att.ticks == :show
-    starts, ends = radial_ticks_coords(att.tstep; len = att.tlen)
-
-    pts = Vector{Point2f}(undef, 2 * size(starts, 1))
-
-    k = 1
-    for i in eachindex(starts[:, 1])
-        pts[k]   = Point2f(starts[i, 1], starts[i, 2])
-        pts[k+1] = Point2f(ends[i,   1], ends[i,   2])
-        k += 2
+    if att.frame===:show
+        curves = att.grid===:show ?
+            vcat(great_circle_grid(att.sstep,att.gstep,att.net,att.view,att.acor),
+                 small_circle_grid(att.sstep,att.net,att.view,att.acor),
+                 net_frame(att.net,att.view,att.acor)) :
+            net_frame(att.net,att.view,att.acor)
+        for line in curves
+            pts=Point2f[]
+            for i in axes(line,1)
+                if all(isfinite,line[i,:])
+                    push!(pts,Point2f(line[i,1],line[i,2]))
+                elseif !isempty(pts)
+                    lines!(ax,pts;color=att.grid_color,linewidth=att.grid_linewidth,
+                           linestyle=att.grid_linestyle,alpha=att.grid_alpha)
+                    empty!(pts)
+                end
+            end
+            !isempty(pts) && lines!(ax,pts;color=att.grid_color,
+                linewidth=att.grid_linewidth,linestyle=att.grid_linestyle,alpha=att.grid_alpha)
+        end
     end
-
-    linesegments!(ax, pts;
-        color = att.grid_color,
-        linewidth = att.grid_linewidth,
-        alpha = att.grid_alpha
-    )
-    end
-
-
-  # Validate and auto-correct grid setting
-  if att.frame == :hide && att.grid == :show
-      @warn "grid cannot be :show when frame is :hide, setting grid to :hide"
-      att.grid = :hide
-  end
-
-  # Compute grid components
-  gc = great_circle_grid(att.sstep, att.gstep, att.net, att.view, att.acor)
-  sc = small_circle_grid(att.sstep, att.net, att.view, att.acor)
-  fc = net_frame(att.net, att.view, att.acor)
-
-  # Always draw outer circle
-    
-  circle = Circle(Point2f(0, 0), 1)
-    lines!(ax, circle, 
-      color=att.grid_color,
-      linewidth=att.grid_linewidth,
-      linestyle=att.grid_linestyle,
-      alpha=att.grid_alpha)
-
-    # Determine what grid components to draw
-    grid_c = if att.frame == :show && att.grid == :show
-        vcat(gc, sc, fc)
-    elseif att.frame == :show && att.grid == :hide
-        fc 
-    else  # att.frame == :hide && att.grid == :hide
-        []  
-    end
-
-    # Draw grid components
-    for line in grid_c
-        pts = Point2f.(line[:, 1], line[:, 2])
-        lines!(ax, pts, 
-            color=att.grid_color,
-            linewidth=att.grid_linewidth,
-            linestyle=att.grid_linestyle,
-            alpha=att.grid_alpha)
-    end
-    
-    return hp
+    return h
 end
- 
+
+
+
 """
     hemi(; kwargs...) -> HemiPlot
 
@@ -153,16 +131,19 @@ lines, and small circles.
 # Keyword Arguments
 - `view::Tuple{Real,Real}`: Viewing direction as `(trend, plunge)` in degrees. 
   Default is `(0, 90)`.
+- `acor::Real`: Additional rotation angle (degrees) around the z-axis applied 
+  after view transformation. Default is `0`.
+- `net::Symbol`: Projection type. Choose between `:wulff` for equiangular 
+  projection and `:schmidt` for equal-area projection. Default is `:wulff`.  
 - `grid::Symbol`: Whether to draw the stereonet grid (`:show` or `:hide`). 
   Default is `:show`.
 - `frame::Symbol`: Whether to draw the stereonet frame (`:show` or `:hide`). 
   Default is `:show`.
-- `net::Symbol`: Projection type. Choose between `:wulff` for equiangular 
-  projection and `:schmidt` for equal-area projection. Default is `:wulff`.
+- `ticks::Symbol`: Marks and labels drawn around the stereonet's outer circle, use `:deg` for degrees, `:car` for cardinals or `:hide`.
+- `tstep::Int`: Angular spacing in degrees between tick marks. Default is `10`.
+- `tlen::Real`: Length of the tick marks as a fraction of the radius. Default is `0.015`.
 - `sstep::Int`: Angular spacing (degrees) for small-circle grid. Default is `10`.
 - `gstep::Int`: Angular spacing (degrees) for great-circle grid. Default is `10`.
-- `acor::Real`: Additional rotation angle (degrees) around the z-axis applied 
-  after view transformation. Default is `0`.
 - `grid_color::Symbol`: Color used for grid and frame elements. Default is `:gray`.
 - `grid_linestyle::Symbol`: Line style for grid elements. Default is `:dash`.
 - `grid_linewidth::Real`: Line width for grid elements. Default is `0.5`.
@@ -177,57 +158,20 @@ lines, and small circles.
 h = hemi(net = :wulff, view = (0, 90))
 ```
 """
-function hemi(;
-    view::Tuple{Real,Real} = (0, 90),
-    grid::Symbol = :show,
-    frame::Symbol=:show,
-    net::Symbol = :wulff,
-    sstep::Int = 10,
-    gstep::Int = 10,
-    acor::Real = 0,
-    grid_color::Symbol = :gray,
-    grid_linestyle::Symbol = :dash,
-    grid_linewidth::Real = 0.5,
-    grid_alpha::Real = 1.0,
-    size::Tuple{Real,Real} = (600, 600),
-    ticks::Symbol=:hide,
-    tstep::Int=10, # Try to use only these values: [10, 30, 45, 90]
-    tlen::Real=0.015
-    )
-    fig = Figure(size = size)
-    ax = Axis(fig[1, 1], aspect = DataAspect())
-    hidedecorations!(ax)
-    hidespines!(ax)
-
-    att = GridAttributes(
-        view=view,
-        grid=grid,
-        frame=frame,
-        net=net,
-        sstep=sstep,
-        gstep=gstep,
-        acor=acor,
-        grid_color=grid_color,
-        grid_linestyle=grid_linestyle,
-        grid_linewidth=grid_linewidth,
-        grid_alpha=grid_alpha,
-        size=size,
-        ticks=ticks,
-        tstep=tstep,
-        tlen=tlen
-    )
-
-    hp = HemiPlot(fig, ax, att)
-    draw_hemi!(hp)
-
-    return hp
+function hemi(;view=(0,90),grid=:show,frame=:show,net=:wulff,sstep=10,gstep=10,
+    acor=0,grid_color=:gray,grid_linestyle=:dash,grid_linewidth=0.5,
+    grid_alpha=1.0,size=(600,600),ticks=:deg,tstep=10,tlen=0.015)
+	
+	_check_interactive_backend()
+    att=GridAttributes(;view,grid,frame,net,sstep,gstep,acor,grid_color,
+        grid_linestyle,grid_linewidth,grid_alpha,size,ticks,tstep,tlen)
+    fig=Figure(size=att.size)
+    ax=Axis(fig[1,1],aspect=DataAspect())
+    hidedecorations!(ax); hidespines!(ax)
+    h=HemiPlot(fig,ax,att)
+    draw_hemi!(h)
+    return h
 end
-
-#######################
-######## Lines ########
-#######################
-
-#Lines on the unit sphere are displayed as scatter plots
 
 """
     lineations!(h::HemiPlot, trd, plg; form=:a, kwargs...)
@@ -259,36 +203,12 @@ lineations!(h, 45, 30)
 lineations!(h, [10, 40], [20, 60])
 ```
 """  
-function lineations!(
-    h::HemiPlot,
-    trd::Union{Real, AbstractVector{<:Real}},
-    plg::Union{Real, AbstractVector{<:Real}};
-    form::Union{Symbol, AbstractVector{Symbol}} = :a,
-    color=:black,
-    markersize =6,
-    kwargs...
-    )
-
-    !(trd isa AbstractVector) && (trd=[trd])
-    !(plg isa AbstractVector) && (plg=[plg])
-    
-    c = line_coordinates(trd, plg, h.att.net, h.att.view, h.att.acor, form=form)
-    c = vcat(c...)
-
-    scatter!(h.ax, c[:,1], c[:,2]; markersize=markersize, color=color, kwargs...)
-end
-
-#######################
-######## Planes #######
-#######################
-
-#Planes on the unit sphere are displayed as line plots
-
-
-@inline function pole(dipdir::Real, dip::Real)
-    trend = dip == 0 ? dipdir : mod(dipdir - 180.0, 360.0)
-    plunge = dip == 0 ? 90.0   : 90.0 - abs(dip)
-    return trend, plunge
+function lineations!(h::HemiPlot,trd,plg;form=:a,color=:black,markersize=6,kwargs...)
+    pts=line_coordinates(trd,plg,h.att.net,h.att.view,h.att.acor;form)
+    isempty(pts) && return nothing
+    xy=vcat(pts...)
+    scatter!(h.ax,xy[:,1],xy[:,2];markersize,color,kwargs...)
+	return h
 end
 
 """
@@ -327,130 +247,49 @@ traces!(h, 120, 45)
 traces!(h, [30, 60], [40, 50], view = :pole)
 ```
 """
-function traces!(
-    h::HemiPlot,
-    dipdir::Union{Real, AbstractVector{<:Real}},
-    dip::Union{Real, AbstractVector{<:Real}};
-    hemi::Symbol = :lower,
-    view::Symbol = :trace,
-    polecolor::Symbol = :black,
-    polealpha::Real = 1,
-    strokecolor::Symbol = :black,
-    strokewidth::Real = 0,
-    linecolor::Symbol = :black,
-    linewidth::Real = 1.3,
-    linealpha::Real = 1,
-    kwargs...
-    )
-
-    view ∈ (:trace, :pole) ||
-        throw(StereonetError("view must be :trace or :pole"))
-
-    # Normalize inputs to vectors
-    dipdir_vec = dipdir isa AbstractVector ? dipdir : [dipdir]
-    dip_vec    = dip    isa AbstractVector ? dip    : [dip]
-
-    length(dipdir_vec) == length(dip_vec) ||
-        throw(ArgumentError("dipdir and dip must have the same length"))
-
-
-    if view === :trace
-        curves = plane_coordinates(dipdir_vec, dip_vec, hemi = hemi, h.att.net, h.att.view, h.att.acor)
-        
-        isa(curves, Matrix) && (curves = [curves])
-
-        for line in curves
-            lines!(h.ax, line[:,1], line[:,2]; color=linecolor, alpha=linealpha, linewidth=linewidth, kwargs...)
+function traces!(h::HemiPlot,dipdir,dip;hemi=:lower,view=:trace,
+    polecolor=:black,polealpha=1,strokecolor=:black,strokewidth=0,
+    linecolor=:black,linewidth=1.3,linealpha=1,kwargs...)
+    view in (:trace,:pole) || throw(StereonetError("view must be :trace or :pole"))
+    dv,pv=_as_float_vector(dipdir),_as_float_vector(dip)
+    length(dv)==length(pv) || throw(ArgumentError("dipdir and dip must have the same length"))
+    if view===:trace
+        curves=plane_coordinates(dv,pv,h.att.net,h.att.view,h.att.acor;hemi)
+        plots=Any[]
+        for curve in curves
+            push!(plots,lines!(h.ax,curve[:,1],curve[:,2];color=linecolor,
+                               alpha=linealpha,linewidth,kwargs...))
         end
-        return nothing
+        return plots
     end
-
-    # Pole view
-    trd = similar(dipdir_vec, Float64)
-    plg = similar(dip_vec, Float64)
-
-    for i in eachindex(dipdir_vec)
-        trd[i], plg[i] = pole(dipdir_vec[i], dip_vec[i])
-    end
-
-    pts = line_coordinates(
-        trd,
-        plg,
-        h.att.net,
-        h.att.view,
-        h.att.acor;
-        form = :a
-    )
-
-    pts = vcat(pts...)
-    return scatter!(h.ax, pts[:,1], pts[:,2]; color=polecolor, alpha=polealpha, strokecolor=strokecolor, strokewidth=strokewidth, kwargs...)
+    poles=[pole(dv[i],pv[i]) for i in eachindex(dv)]
+    isempty(poles) && return nothing
+    pts=line_coordinates(first.(poles),last.(poles),h.att.net,h.att.view,h.att.acor;form=:a)
+    xy=vcat(pts...)
+    return scatter!(h.ax,xy[:,1],xy[:,2];color=polecolor,alpha=polealpha,
+                    strokecolor,strokewidth,kwargs...)
 end
 
-#######################
-#### Small Circles ####
-#######################
-
-#Generate points along the smaller circular arc between p1 and p2 on a unit circle.
-function circular_arc(p1::Vector{Float64}, p2::Vector{Float64}, step_deg::Float64)
-
-    # Calculate angles in radians
-    θ1 = atan(p1[2], p1[1])
-    θ2 = atan(p2[2], p2[1])
-    
-    # Ensure angles are in [0, 2π)
-    θ1 = mod(θ1, 2π)
-    θ2 = mod(θ2, 2π)
-    
-    # Calculate both possible angular differences
-    Δθ_ccw = mod(θ2 - θ1, 2π)  # Counter-clockwise difference
-    Δθ_cw = mod(θ1 - θ2, 2π)    # Clockwise difference
-    
-    # Determine the shorter arc direction
-    if Δθ_ccw ≤ Δθ_cw
-        Δθ = Δθ_ccw
-        direction = 1  # Counter-clockwise
-    else
-        Δθ = Δθ_cw
-        direction = -1 # Clockwise
-    end
-    
-    # Convert step to radians
-    step_rad = deg2rad(step_deg)
-    
-    # Determine number of steps (excluding endpoints)
-    n_steps = floor(Int, Δθ / step_rad)
-    
-    # Generate points along the arc
-    points = Matrix{Float64}(undef, n_steps + 1, 2)
-    points[1, :] = p1
-    
-    for i in 1:n_steps
-        θ = θ1 + i * step_rad * direction
-        # Handle wrap-around for angles crossing 2π
-        θ = mod(θ, 2π)
-        points[i+1, :] = [cos(θ), sin(θ)]
-    end
-    
-    # Make sure the last point is exactly p2 (to avoid floating point errors)
-    if n_steps > 0 && !isapprox(points[end, :], p2, atol=1e-8)
-        points[end, :] = p2
-    end
-    
-    return points
+function circular_arc(p1::Vector{Float64},p2::Vector{Float64},step_deg::Float64)
+    step_deg>0 || throw(ArgumentError("step_deg must be positive"))
+    θ1,θ2=mod(atan(p1[2],p1[1]),2π),mod(atan(p2[2],p2[1]),2π)
+    ccw=mod(θ2-θ1,2π)
+    direction=ccw<=π ? 1.0 : -1.0
+    Δ=direction==1 ? ccw : mod(θ1-θ2,2π)
+    n=max(1,ceil(Int,rad2deg(Δ)/step_deg))
+    θs=range(θ1,step=direction*Δ/n,length=n+1)
+    out=hcat(cos.(θs),sin.(θs))
+    out[1,:].=p1; out[end,:].=p2
+    return out
 end
 
 function close_path(xy_segments)
-    m1 = xy_segments[1]
-    m2 = xy_segments[2] 
-    arc1 = circular_arc(m1[1,:], m1[end,:], 0.5)
-    arc2 = circular_arc(m2[1,:], m2[end,:], 0.5)
-    arc1 = reverse(arc1, dims=1)
-    arc2 = reverse(arc2, dims=1)
-    m1 = vcat(m1, arc1)
-    m2 = vcat(m2, arc2)
-    return [m1, m2]
+    length(xy_segments)==2 || throw(ArgumentError("close_path expects exactly two segments"))
+    m1,m2=xy_segments
+    a1=reverse(circular_arc(vec(m1[1,:]),vec(m1[end,:]),0.5),dims=1)
+    a2=reverse(circular_arc(vec(m2[1,:]),vec(m2[end,:]),0.5),dims=1)
+    return [vcat(m1,a1),vcat(m2,a2)]
 end
-
 
 """
     smallc!(h::HemiPlot, trd, plg, angle; draw=:line, kwargs...)
@@ -486,69 +325,68 @@ smallc!(h, 0, 0, 30)
 smallc!(h, [0, 90], [0, 0], [20, 40])
 ```
 """   
-function smallc!(
-    h::HemiPlot,
-    trd::Union{Real, AbstractVector{<:Real}},
-    plg::Union{Real, AbstractVector{<:Real}},
-    angle::Union{Real, AbstractVector{<:Real}};
-    draw::Symbol = :line,
-    fill::Symbol = :skyblue1,
-    polyalpha::Real = 0.3,
-    linecolor::Symbol = :black,
-    linewidth::Real = 1.3,
-    linealpha::Real = 0.3,
-    kwargs...
-    )
-
-    draw ∈ [:line, :poly] || throw(StereonetError("draw must be :line or :poly"))
-
-    n = length(trd)
-    pts1 = Matrix{Float64}[]
-    pts2 = Matrix{Float64}[]
-    polys = Vector{Vector{Point2f}}()
-
-    #fill arrays
-    for i in 1:n
-        segments = small_circle_coords(trd[i], plg[i], angle[i], h.att.net, h.att.view, h.att.acor)
-
-        if draw == :line
-            if length(segments) == 1
-                push!(pts1, segments[1], [NaN NaN])
-            else
-                push!(pts2, segments[1], [NaN NaN], segments[2], [NaN NaN])
+function smallc!(h::HemiPlot,trd,plg,angle;draw=:line,fill=:skyblue1,
+    polyalpha=0.3,linecolor=:black,linewidth=1.3,linealpha=0.3,kwargs...)
+    draw in (:line,:poly) || throw(StereonetError("draw must be :line or :poly"))
+    tv,pv,av=_as_float_vector(trd),_as_float_vector(plg),_as_float_vector(angle)
+    length(tv)==length(pv)==length(av) || throw(ArgumentError("trend, plunge and angle must have equal lengths"))
+    lineplots=Any[]; polyplots=Any[]
+    for i in eachindex(tv)
+        segs=small_circle_coords(tv[i],pv[i],av[i],h.att.net,h.att.view,h.att.acor)
+        if draw===:line
+            for seg in segs
+                push!(lineplots,lines!(h.ax,seg[:,1],seg[:,2];color=linecolor,
+                                       alpha=linealpha,linewidth,kwargs...))
             end
-
-        elseif draw == :poly
-            if length(segments) == 2
-                segments = close_path(segments)
-            end
-            for m in segments
-                push!(polys, Point2f.(m[:, 1], m[:, 2]))
-            end
-             
-        end
-    end
-
-    #plot
-    if draw == :line
-        if !isempty(pts1) && isempty(pts2)
-            return lines!(h.ax, vcat(pts1...); color=linecolor, alpha=linealpha, linewidth=linewidth, kwargs...)
-        elseif isempty(pts1) && !isempty(pts2)
-            return lines!(h.ax, vcat(pts2...); color=linecolor, alpha=linealpha, linewidth=linewidth, kwargs...)
         else
-            return lines!(h.ax, vcat(vcat(pts1...), vcat(pts2...), [NaN NaN]); color=linecolor, alpha=linealpha, linewidth=linewidth, kwargs...)
+            polygons=length(segs)==2 ? close_path(segs) : segs
+            for seg in polygons
+                push!(polyplots,poly!(h.ax,Point2f.(seg[:,1],seg[:,2]);
+                                      color=fill,alpha=polyalpha,strokewidth=0,kwargs...))
+            end
         end
-    elseif draw == :poly
-        if !isempty(polys)
-            return poly!(h.ax, polys; color=fill, alpha=polyalpha, strokewidth=0 ,kwargs...)
-        end 
     end
-      
+    return draw===:line ? lineplots : polyplots
 end
 
-##############################
-#### save, display, show  ####
-##############################
+function _check_interactive_backend()
+    backend = current_backend()
+    if !isnothing(backend) && nameof(backend) === :CairoMakie
+        # Detect if an integrated graphical environment (VS Code, IJulia, Pluto, etc.) is active
+        # Excludes REPL, TextDisplay, and Makie's external image viewer display
+        has_integrated_display = any(Base.Multimedia.displays) do d
+            !(d isa REPL.REPLDisplay || d isa TextDisplay || parentmodule(typeof(d)) === Makie)
+        end
+        if !has_integrated_display
+            @warn """
+            CairoMakie is active in a terminal without an integrated plot pane: every command that returns the figure will open a new window in your system's image viewer.
+            • To update a single interactive window in real time, activate GLMakie:
+                using GLMakie; GLMakie.activate!()
+            • If you prefer to keep using CairoMakie, end mutating calls with `;` (e.g., `traces!(h, ...);`) and evaluate `h` at the end to view the final result.
+            """ maxlog=1
+        end
+    end
+end
+
+
+function Base.display(hp::HemiPlot)
+    backend = current_backend()
+    if !isnothing(backend) && isdefined(backend, :Screen)
+        screen = getscreen(hp.fig.scene)
+        if isnothing(screen) || !isopen(screen)
+            # La figura aún no tiene ventana (o se cerró): abre una nueva exclusiva para ella
+            return display(getfield(backend, :Screen)(), hp.fig)
+        else
+            # La figura ya está abierta en su propia ventana: solo la devuelve sin duplicarla
+            return screen
+        end
+    end
+    return display(hp.fig)
+end
+Base.show(io::IO,::MIME"text/plain",h::HemiPlot)=
+    print(io,"HemiPlot(view=$(h.att.view), net=$(h.att.net))")
+Base.show(io::IO,mime::MIME"image/png",h::HemiPlot)=show(io,mime,h.fig)
+Base.show(io::IO,mime::MIME"image/svg+xml",h::HemiPlot)=show(io,mime,h.fig)
 
 """
      (filename::String, h::HemiPlot; kwargs...) -> String
@@ -575,54 +413,19 @@ such as PDF and SVG require `CairoMakie` to be available.
 save("stereonet.png", h)
 save("stereonet.pdf", h)
 """
-function save(name::String, h::HemiPlot; kwargs...)
-    abspath_file = abspath(name)
-    dir = dirname(abspath_file)
-    if !isdir(dir) && dir != ""
-        mkpath(dir)
-    end
-    
-    ext = lowercase(splitext(name)[2])
-    
-    # For vector formats, we need CairoMakie
-    if ext in [".pdf", ".svg", ".eps"]
-        if !isdefined(Main, :CairoMakie)
-            StereonetError("
-            To save to $ext format, you need CairoMakie:
-            using CairoMakie
-            ")
+function save(name::String,h::HemiPlot;kwargs...)
+    path=abspath(name)
+    mkpath(dirname(path))
+    ext=lowercase(splitext(name)[2])
+    if ext in (".pdf",".svg",".eps")
+        if !isdefined(Main,:CairoMakie)
+            throw(StereonetError("To save to $ext, load CairoMakie first: using Cairo
+			 "))
         end
-        Main.CairoMakie.save(name, h.fig; kwargs...)
+        Main.CairoMakie.save(path,h.fig;kwargs...)
     else
-        save(name, h.fig; kwargs...)
+        save(path,h.fig;kwargs...)
     end
-
-    return abspath_file
+    return path
 end
 
-function display(hp::HemiPlot)
-
-    if current_backend() isa Module
-        backend = current_backend()
-        if isdefined(backend, :Screen)
-            display(backend.Screen(), hp.fig)
-        else
-            display(hp.fig)
-        end
-    else
-        display(hp.fig)
-    end
-end
-
-function Base.show(io::IO, ::MIME"text/plain", h::HemiPlot)
-    println(io, "HemiPlot(view=$(h.att.view), net=$(h.att.net))")
-end
-
-# For Jupyter/inline display
-function Base.show(io::IO, mime::MIME"image/png", h::HemiPlot)
-    show(io, mime, h.fig)
-end
-
-function Base.show(io::IO, mime::MIME"image/svg+xml", h::HemiPlot)
-    show(io, mime, h.fig)
-end
