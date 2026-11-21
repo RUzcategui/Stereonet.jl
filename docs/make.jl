@@ -7,10 +7,6 @@ CairoMakie.activate!(type = "png")
 println("=== Starting documentation build ===")
 println("Documenter version: ", pkgversion(Documenter))
 
-# Generate tables BEFORE building docs
-println("=== Generating tables ===")
-include("generate_tables.jl")
-
 DocMeta.setdocmeta!(Stereonet, :DocTestSetup, :(using Stereonet); recursive=true)
 
 makedocs(

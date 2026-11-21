@@ -25,7 +25,7 @@ Create a stereonet with default attributes:
 using Stereonet
 using CairoMakie
 
-h = hemi(size=(300, 300))
+h = hemi()
 ```
 
 ## Grid and Frame Attributes
@@ -49,6 +49,9 @@ Attributes are defined as keyword arguments. The following table describes each 
 | `ticks::Symbol` | Marks and labels drawn around the stereonet's outer circle. Options: `:deg` (degrees), `:car` (cardinals) or `:hide`. **Default:** `:deg` |
 | `tstep::Int` | Angular spacing (degrees) between tick marks; only used when `ticks = :deg` (must divide 360). **Default:** `10` |
 | `tlen::Real` | Length of the tick marks as a fraction of the radius; only used when `ticks = :deg`. **Default:** `0.015` |
+| `font::Union{Symbol, String}` | Sets the ticks font. Can be a Symbol which will be looked up in the fonts dictionary or a String specifying the (partial) name of a font or the file path of a font file. **Default:** `:regular` |
+| `fontsize::Int` | Sets the ticks fontsize. `fontsize::Int`: Font size used for stereonet labels, in points. Recommended maximum values are 8 pt for figures of 200 × 200 pixels, 12 pt for 300 × 300 pixels, 13 pt for 400 × 400 pixels, and 14 pt for 500 × 500 pixels. For larger figures (600 × 600 pixels or above), a maximum of 15 pt is suggested. **Default:** `12` |
+
 
 ## Net view direction
 
@@ -61,12 +64,14 @@ h = hemi(
     net = :schmidt,
     view = (30, 20),
     grid = :show,
-    size=(300, 300),
+    size=(450, 450),
     frame = :show,
     grid_color=:deepskyblue2,
     grid_linestyle=:solid
 )
 ```
+!!! note 
+    Adding ticks to figures is currently only supported when the view is set to (0, 90). Support for other views is currently in progress.
 
 ## Plotting Linear Features
 
@@ -76,7 +81,7 @@ Linear features are plotted using `lineations!`:
 using Stereonet
 using CairoMakie
 
-h = hemi(net = :schmidt, size=(300, 300))
+h = hemi(net = :schmidt, size=(450, 450), fontsize=12)
 lineations!(h, 300, 20)  # trend=300°, plunge=20°
 lineations!(h, [50], [0], marker = :rect,
         markersize = 11, color = :yellow1)
@@ -105,7 +110,7 @@ h
 using Stereonet
 using CairoMakie
 
-h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
+h = hemi(net = :wulff, view = (0, 90), size=(450, 450), fontsize=12, tstep=15)
 lineations!(h, [90, 90], [45, 45], form = [:v, :a], color = :red)
 h
 ```
@@ -118,7 +123,7 @@ h
 using Stereonet
 using CairoMakie
 
-h = hemi(net=:wulff, view=(0, 90), size=(300, 300))
+h = hemi(net=:wulff, view=(0, 90), size=(450, 450), fontsize=12, tstep=30)
 lineations!(h, [90], [-45], form = [:a], color = :green)
 lineations!(h, [90], [-45], form = [:v], color = :red)
 h
@@ -131,7 +136,7 @@ h
 using Stereonet
 using CairoMakie
 
-h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
+h = hemi(net = :wulff, view = (0, 90), size=(450, 450), fontsize=12, tstep=45)
 lineations!(h, 270, -20, form = :v,
             color = :transparent,
             strokewidth = 1,
@@ -153,7 +158,7 @@ trends = [0.0, 45.0, 90.0, 135.0]
 plunges = [15.0, 30.0, -45.0, -60.0]
 forms = [:a, :v, :a, :v]
 
-h = hemi(size=(300, 300))
+h = hemi(size=(450, 450), fontsize=12, tstep=90)
 lineations!(h, trends, plunges, form=forms)
 h
 ```
@@ -167,7 +172,7 @@ using CairoMakie
 trends = [0.0, 45.0, 90.0, 135.0]
 plunges = [15.0, 30.0, -45.0, -60.0]
 
-h = hemi(size=(300, 300))
+h = hemi(size=(450, 450), ticks=:car, fontsize=12)
 lineations!(h, trends, plunges, form=:v)
 h
 ```
@@ -180,7 +185,7 @@ Planar features are plotted using `traces!`:
 using Stereonet
 using CairoMakie
 
-h = hemi(net = :wulff, view = (0, 90), size=(300, 300))
+h = hemi(net = :wulff, view = (0, 90), size=(450, 450), ticks=:car, fontsize=12)
 traces!(h, 120, 45)  # strike=120°, dip=45°
 traces!(h, [250], [70], color=:darkgreen, linestyle= (:dashdot, :dense), linewidth=2)
 h
@@ -213,7 +218,7 @@ h
 using Stereonet
 using CairoMakie
 
-h = hemi(size=(300, 300))
+h = hemi(size=(450, 450), ticks=:car, fontsize=12)
 
 # Plot multiple planes
 strikes = [0, 45, 90, 135]
@@ -234,7 +239,7 @@ Small circles are conical sections on a sphere, defined by the axis trend and pl
 using Stereonet
 using CairoMakie
 
-h = hemi(size=(300, 300))
+h = hemi(size=(450, 450), ticks=:car, fontsize=12)
 
 # Single small circle
 smallc!(h, 0, 90, 30, draw=:line, color=:blue, linewidth=1)    # Draw as line
@@ -271,7 +276,7 @@ h
 using Stereonet
 using CairoMakie
 
-h = hemi(size=(300, 300))
+h = hemi(size=(450, 450), ticks=:car, fontsize=12)
 
 # Poor result
 smallc!(h, 0, 0, 30, draw=:poly, color=:bisque, strokecolor=:black, strokewidth=2)
@@ -291,7 +296,7 @@ Stereonet uses Makie's saving functionality. The output format is determined by 
 using Stereonet
 using CairoMakie
 
-h = hemi(size=(300, 300))
+h = hemi(size=(450, 450), fontsize=12)
 # ... add your data ...
 
 # Vector formats — ideal for publications and presentations

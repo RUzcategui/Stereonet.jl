@@ -16,18 +16,21 @@ mutable struct GridAttributes
     ticks::Symbol
     tstep::Int
     tlen::Real
+    font::Union{Symbol, String}
+    fontsize::Int
     function GridAttributes(;view=(0,90),grid=:show,frame=:show,net=:wulff,
         sstep=10,gstep=10,acor=0,grid_color=:gray,grid_linestyle=:dash,
         grid_linewidth=0.5,grid_alpha=1.0,size=(600,600),ticks=:deg,
-        tstep=10,tlen=0.015)
+        tstep=10,tlen=0.015, font=:regular, fontsize=12)
         view isa Tuple && length(view)==2 || throw(ArgumentError("view must be (trend, plunge)"))
         grid in (:show,:hide) || throw(ArgumentError("grid must be :show or :hide"))
         frame in (:show,:hide) || throw(ArgumentError("frame must be :show or :hide"))
         net in (:wulff,:schmidt) || throw(ArgumentError("net must be :wulff or :schmidt"))
         ticks in (:deg,:car,:hide) || throw(ArgumentError("ticks must be :deg for degress, :car for cardinals or :hide"))
         sstep>0 && gstep>0 && tstep>0 || throw(ArgumentError("angular steps must be positive"))
+        size[1] == size[2] || throw(ArgumentError("Image must be square"))
         new(view,grid,frame,net,sstep,gstep,acor,grid_color,grid_linestyle,
-            grid_linewidth,grid_alpha,(round(Int,size[1]),round(Int,size[2])),ticks,tstep,tlen)
+            grid_linewidth,grid_alpha,(round(Int,size[1]),round(Int,size[2])),ticks,tstep,tlen, font, fontsize)
     end
 end
 
@@ -37,7 +40,8 @@ mutable struct HemiPlot <: AbstractStereonet
     att::GridAttributes
 end
 
-function radial_ticks_coords(step::Int;r0=1.0,len=0.05)
+function radial_ticks_coords(step::Int, len::Real)
+    r0=1.0
     step > 0 && 360 % step == 0 || throw(ArgumentError("step must be a positive divisor of 360"))
     θs = 0:step:(360-step)
     starts = Matrix{Float64}(undef,length(θs),2)
@@ -52,12 +56,24 @@ end
 
 function draw_hemi!(h::HemiPlot)
     ax,att = h.ax,h.att
+
+    tlen = 10 / att.size[1]
+
     if att.frame===:hide && att.grid===:show
         @warn "grid cannot be :show when frame is :hide; hiding grid"
         att.grid=:hide
     end
+
+    #Ticklines
+    pts = Point2f[]
+    starts,ends = radial_ticks_coords(att.tstep, tlen)
+    for i in axes(starts,1)
+        push!(pts,Point2f(starts[i,1],starts[i,2]),Point2f(ends[i,1],ends[i,2]))
+    end
+    linesegments!(ax,pts;color=att.grid_color,linewidth=att.grid_linewidth,alpha=att.grid_alpha)
 	
 	if att.ticks===:car && att.view[2]==90
+        r_text = 1.0 + 3 * tlen
 		att.tstep = 90
         label_card = ["N", "W", "S", "E"]
 		for (i, θ) in enumerate(0:att.tstep:(360-att.tstep))
@@ -65,27 +81,33 @@ function draw_hemi!(h::HemiPlot)
 			x, y = cosd(θrot + 90), sind(θrot + 90)
 			rot = deg2rad(θrot) - π/2
 			π/2 < mod(rot, 2π) < 3π/2 && (rot += π)
-			text!(ax, label_card[i], position = Point2f(1.08x, 1.08y),
-			   align = (:center, :center), fontsize = 12, color = att.grid_color)
+			text!(ax, label_card[i], position = Point2f(r_text*x, r_text*y),
+			   align = (:center, :center), font =  att.font, fontsize =  att.fontsize, color = att.grid_color)
 		end
     end
 	 
     if att.ticks===:deg && att.view[2]==90
-	 
-        starts,ends = radial_ticks_coords(att.tstep;len=att.tlen)
-        pts = Point2f[]
-        for i in axes(starts,1)
-            push!(pts,Point2f(starts[i,1],starts[i,2]),Point2f(ends[i,1],ends[i,2]))
-        end
-        linesegments!(ax,pts;color=att.grid_color,linewidth=att.grid_linewidth,alpha=att.grid_alpha)
+        r_text = 1.0 + 5 * tlen
         for θ in 0:att.tstep:(360-att.tstep)
             θrot=θ+att.view[1]+att.acor
             label_angle=mod(360-θ,360)
             x,y=cosd(θrot+90),sind(θrot+90)
             rot=deg2rad(θrot)-π/2
             π/2<mod(rot,2π)<3π/2 && (rot+=π)
-            text!(ax,string(label_angle,"°"),position=Point2f(1.08x,1.08y),
-                  rotation=rot,align=(:center,:center),fontsize=12,color=att.grid_color)
+            rot = (rot == -π/2) ? 0 : rot
+            if rad2deg(rot) >= 360. && rad2deg(rot) <= 440.
+                r_text = 1.0 + 4.4 * tlen
+            end
+            if rad2deg(rot) > 440. && rad2deg(rot) <= 450.
+                r_text = 1.0 + 3.6 * tlen
+            end
+            if label_angle == 0.
+                println("labet text= ", label_angle, ", rot= ", rad2deg(rot))
+                #r_text = 1.0 + 2.8 * tlen
+            end
+            
+            text!(ax,string(label_angle,"°"),position=Point2f(r_text*x, r_text*y),
+                  rotation=rot, align=(:center, :center), font= att.font, fontsize= att.fontsize, color=att.grid_color)
         end
     end
 
@@ -144,6 +166,8 @@ lines, and small circles.
 - `tlen::Real`: Length of the tick marks as a fraction of the radius. Default is `0.015`.
 - `sstep::Int`: Angular spacing (degrees) for small-circle grid. Default is `10`.
 - `gstep::Int`: Angular spacing (degrees) for great-circle grid. Default is `10`.
+- `font::Union{Symbol, String}`: Sets the font. Can be a Symbol which will be looked up in the fonts dictionary or a String specifying the (partial) name of a font or the file path of a font file. Default is `:regular`.
+- `fontsize::Int`: The fontsize. Default is `12`.
 - `grid_color::Symbol`: Color used for grid and frame elements. Default is `:gray`.
 - `grid_linestyle::Symbol`: Line style for grid elements. Default is `:dash`.
 - `grid_linewidth::Real`: Line width for grid elements. Default is `0.5`.
@@ -160,11 +184,12 @@ h = hemi(net = :wulff, view = (0, 90))
 """
 function hemi(;view=(0,90),grid=:show,frame=:show,net=:wulff,sstep=10,gstep=10,
     acor=0,grid_color=:gray,grid_linestyle=:dash,grid_linewidth=0.5,
-    grid_alpha=1.0,size=(600,600),ticks=:deg,tstep=10,tlen=0.015)
+    grid_alpha=1.0,size=(600,600),ticks=:deg,tstep=10,tlen=0.015, font=:regular, fontsize=12)
 	
 	_check_interactive_backend()
     att=GridAttributes(;view,grid,frame,net,sstep,gstep,acor,grid_color,
-        grid_linestyle,grid_linewidth,grid_alpha,size,ticks,tstep,tlen)
+        grid_linestyle,grid_linewidth,grid_alpha,size,ticks,tstep,tlen,
+        font,fontsize)
     fig=Figure(size=att.size)
     ax=Axis(fig[1,1],aspect=DataAspect())
     hidedecorations!(ax); hidespines!(ax)
