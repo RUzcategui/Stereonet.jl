@@ -60,25 +60,29 @@ end
 
 function line_coordinates(t, p, net::Symbol, view::Tuple{<:Real,<:Real}, acor::Real;
                           form::Union{Symbol,AbstractVector{<:Symbol}}=:a)
+
     tv, pv = _as_float_vector(t), _as_float_vector(p)
     length(tv) == length(pv) || throw(StereonetError("Trend and plunge vectors must have same length"))
     forms = form isa Symbol ? fill(form,length(tv)) : collect(form)
     length(forms) == length(tv) || throw(StereonetError("Trend, plunge and form vectors must have same length"))
     all(f -> f in (:a,:v), forms) || throw(StereonetError("form must be :a (axis) or :v (vector)"))
+    
     project = select_net_equation(net)
     result = Matrix{Float64}[]
-	
+	vector_in_upper_hem = Vector{Bool}[]
     for i in eachindex(tv)
         v = vec(cartesian_coords(tv[i],pv[i]))
         v = change_view_direction(v,view,acor; reproject=(forms[i] === :a))
-		println([3])
-		println(form)
+
 		if forms[i] === :v && v[3] < 0
 			v[3] = -v[3]
+            push!(vector_in_upper_hem, true)
+        else
+            push!(vector_in_upper_hem, false)
 		end
         push!(result, project(reshape(v,1,3), :lower))
     end
-    return result
+    return (result, vector_in_upper_hem)
 end
 
 function _plane_curve(dipdir::Real,dip::Real,net::Symbol,view,acor,hemisphere::Symbol)

@@ -47,7 +47,7 @@ Attributes are defined as keyword arguments. The following table describes each 
 | `grid_linewidth::Real` | Line width for grid and frame elements. **Default:** `0.5` |
 | `grid_alpha::Real` | Transparency for grid and frame elements (0.0–1.0). **Default:** `1.0` |
 | `ticks::Symbol` | Marks and labels drawn around the stereonet's outer circle. Options: `:deg` (degrees), `:car` (cardinals) or `:hide`. **Default:** `:deg` |
-| `tstep::Int` | Angular spacing (degrees) between tick marks; only used when `ticks = :deg` (must divide 360). **Default:** `10` |
+| `tstep::Int` | Angular spacing (degrees) between tick marks, must divide 360. **Default:** `10` |
 | `tlen::Real` | Length of the tick marks as a fraction of the radius; only used when `ticks = :deg`. **Default:** `0.015` |
 | `font::Union{Symbol, String}` | Sets the ticks font. Can be a Symbol which will be looked up in the fonts dictionary or a String specifying the (partial) name of a font or the file path of a font file. **Default:** `:regular` |
 | `fontsize::Int` | Sets the ticks fontsize. `fontsize::Int`: Font size used for stereonet labels, in points. Recommended maximum values are 8 pt for figures of 200 × 200 pixels, 12 pt for 300 × 300 pixels, 13 pt for 400 × 400 pixels, and 14 pt for 500 × 500 pixels. For larger figures (600 × 600 pixels or above), a maximum of 15 pt is suggested. **Default:** `12` |
@@ -81,12 +81,26 @@ Linear features are plotted using `lineations!`:
 using Stereonet
 using CairoMakie
 
-h = hemi(net = :schmidt, size=(450, 450), fontsize=12)
-lineations!(h, 300, 20)  # trend=300°, plunge=20°
-lineations!(h, [50], [0], marker = :rect,
-        markersize = 11, color = :yellow1)
-lineations!(h, [220, 180, 140], [50, 50, 50], marker = :xcross,
-        markersize = 13, color = :green)
+trends  = [302, 318, 330, 342, 358, 308, 324, 336, 348, 002, 314, 330, 344, 356, 320, 338]
+plunges = [29, 37, 43, 39, 31, 41, 47, 35, 45, 33, 39, 49, 31, 43, 35, 41]
+
+h = hemi(net = :schmidt, size=(450, 450), ticks=:car, tstep=30, fontsize=12)
+lineations!(h, trends, plunges)
+
+trend  = [35, 125, 300]
+plunge = [5, 15, 80]
+color = ["#CB3C33", "#389826", "#9558B2"]
+marker = [:utriangle, :circle, :rect] # or ['▲', '●', '■']
+markersize = [18, 20, 22]
+labels = ["σ₃", "σ₂", "σ₁"] # or [L"\sigma_3", L"\sigma_2", L"\sigma_1"]
+align=[(:right, :center), (:left, :center), (:center, :bottom)]
+offset=[(-8, 0), (8, 0), (0, 8)]
+
+for (t, p, c, m, ms, l, a, o) in zip(trend, plunge, color, marker, markersize, labels, align, offset)
+    lineations!(h, t, p, color=c, marker=m, markersize=ms, 
+                         labels=l, align=a, offset=o, fontsize=16)
+end
+
 h
 ```
 
@@ -218,16 +232,18 @@ h
 using Stereonet
 using CairoMakie
 
-h = hemi(size=(450, 450), ticks=:car, fontsize=12)
+h = hemi(size=(450, 450), ticks=:car, tstep=90, fontsize=12)
 
 # Plot multiple planes
 strikes = [0, 45, 90, 135]
 dips = [30, 45, 60, 75]
+colors = [:red, :green, :blue, :magenta]
 
-for (strike, dip) in zip(strikes, dips)
-    traces!(h, strikes, dips, color=:green, linewidth=1)
-    traces!(h, strikes, dips, color=:green, view=:pole)
+for (strike, dip, c) in zip(strikes, dips, colors)
+    traces!(h, strike, dip, color=c, linewidth=1)
+    traces!(h, strike, dip, color=c, view=:pole)
 end
+
 h
 ```
 

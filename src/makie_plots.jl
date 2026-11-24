@@ -102,8 +102,7 @@ function draw_hemi!(h::HemiPlot)
                 r_text = 1.0 + 3.6 * tlen
             end
             if label_angle == 0.
-                println("labet text= ", label_angle, ", rot= ", rad2deg(rot))
-                #r_text = 1.0 + 2.8 * tlen
+                r_text = 1.0 + 2.8 * tlen
             end
             
             text!(ax,string(label_angle,"°"),position=Point2f(r_text*x, r_text*y),
@@ -227,13 +226,29 @@ on the selected stereonet projection.
 lineations!(h, 45, 30)
 lineations!(h, [10, 40], [20, 60])
 ```
-"""  
-function lineations!(h::HemiPlot,trd,plg;form=:a,color=:black,markersize=6,kwargs...)
-    pts=line_coordinates(trd,plg,h.att.net,h.att.view,h.att.acor;form)
+"""
+function lineations!(h::HemiPlot, trd, plg; form=:a, 
+    color=:black, markersize=6, align=(:left, :center), offset=(8, 0), 
+    fontsize=12,  labels=nothing, text_kwargs=(;), kwargs...)
+
+    pts, upper_hem = line_coordinates(trd, plg, h.att.net, h.att.view, h.att.acor; form)
+
+     for i in eachindex(upper_hem)
+
+        
+     end
+
     isempty(pts) && return nothing
-    xy=vcat(pts...)
-    scatter!(h.ax,xy[:,1],xy[:,2];markersize,color,kwargs...)
-	return h
+    xy = vcat(pts...)
+
+    scatter!(h.ax, xy[:, 1], xy[:, 2]; color, markersize, kwargs...)
+
+    labels === nothing && return h
+
+
+    text!(h.ax, xy[:, 1], xy[:, 2]; text=labels, align, offset, fontsize, text_kwargs...)
+
+    return h
 end
 
 """
