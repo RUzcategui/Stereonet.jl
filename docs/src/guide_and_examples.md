@@ -71,7 +71,7 @@ h = hemi(
 )
 ```
 !!! note 
-    Adding ticks to figures is currently only supported when the view is set to (0, 90). Support for other views is currently in progress.
+    Adding ticks to figures is currently only supported when the view is set to (0, 90).
 
 ## Plotting Linear Features
 
@@ -84,7 +84,7 @@ using CairoMakie
 trends  = [302, 318, 330, 342, 358, 308, 324, 336, 348, 002, 314, 330, 344, 356, 320, 338]
 plunges = [29, 37, 43, 39, 31, 41, 47, 35, 45, 33, 39, 49, 31, 43, 35, 41]
 
-h = hemi(net = :schmidt, size=(450, 450), ticks=:car, tstep=30, fontsize=12)
+h = hemi(net = :schmidt, size=(450, 450), grid=:hide, ticks=:car, tstep=30, fontsize=12)
 lineations!(h, trends, plunges)
 
 trend  = [35, 125, 300]
@@ -115,79 +115,66 @@ h
 | `markersize::Real` | Size of the marker. **Default:** `6` |
 
 !!! note
-    For linear data, hemisphere selection is encoded in the orientation itself. Plunge sign and form control whether antipodal directions are distinguished:
 
-##### Behavior with positive plunge (downward):
-- Both `:a` and `:v` plot the point at the same location on the lower hemisphere
+    The North-East-Down (NED) coordinate system is used, where positive plunges point downward and negative plunges point upward.
+
+    For linear data, hemisphere selection is encoded in the orientation of the lineation. The form parameter determines whether antipodal directions are distinguished:
+
+    - `:a` (axis): represents an unoriented line. Directions pointing into the upper hemisphere are plotted at their antipodes on the lower hemisphere.
+    - `:v` (vector): represents an oriented lineation. Its direction is preserved, allowing upper- and lower-hemisphere directions to be distinguished.
+
+**Behavior with positive plunge:**
+
+- Both `:a` and `:v` plot the point at the same location on the lower hemisphere.
 
 ```@example plot4
 using Stereonet
 using CairoMakie
 
-h = hemi(net = :wulff, view = (0, 90), size=(450, 450), fontsize=12, tstep=15)
-lineations!(h, [90, 90], [45, 45], form = [:v, :a], color = :red)
+h = hemi(net = :wulff, view = (0, 90), grid=:hide, frame=:hide, 
+        size=(450, 450), fontsize = 12, tstep = 15)
+        
+lineations!(h, [90, 90], [90, 90], 
+            form = [:v, :a], color = [:red, :blue], 
+            marker=['✚', '✖'], markersize=30)
 h
 ```
 
-##### Behavior with negative plunge (upward):
-- `:a` (axis): Plots the antipode point on the lower hemisphere
-- `:v` (vector): Plots the point on the upper hemisphere
+**Behavior with negative plunge:**
+
+- `:a` plots the antipodal point on the lower hemisphere.
+- `:v` preserves the original direction and plots the point on the upper hemisphere.
 
 ```@example plot5
 using Stereonet
 using CairoMakie
 
-h = hemi(net=:wulff, view=(0, 90), size=(450, 450), fontsize=12, tstep=30)
+h = hemi(net = :wulff, view = (0, 90), size = (450, 450), fontsize = 12, tstep = 30)
 lineations!(h, [90], [-45], form = [:a], color = :green)
 lineations!(h, [90], [-45], form = [:v], color = :red)
+lineations!(h, [90], [45], form = [:v], color = :blue)
 h
 ```
 
 !!! note
-    When using :v with negative plunge, you may want to distinguish between lower and upper hemisphere points. One approach is to use hollow markers:
+
+    The examples above assume the reference view, `view = (0, 90)`, with zero azimuth correction (`acor = 0`). When a different view or azimuth correction is applied, the original coordinates are rotated before hemisphere selection. Therefore, the hemisphere is determined by the vector's vertical component in the rotated coordinate system, not simply by the sign of its original plunge.
+
+    When using `:v`, hollow markers can be used to distinguish vectors that point into the upper hemisphere from those pointing into the lower hemisphere. **By default, upper-hemisphere vectors are displayed with hollow circles, while the remaining lineations use filled circles**.
+
+    You can customize the default attributes, as shown in the following example:
 
 ```@example plot6
 using Stereonet
 using CairoMakie
 
 h = hemi(net = :wulff, view = (0, 90), size=(450, 450), fontsize=12, tstep=45)
-lineations!(h, 270, -20, form = :v,
+lineations!(h, [0, 90, 180, 270], [-20, 20, -20, 20], form = [:a, :v, :a, :v],
             color = :transparent,
             strokewidth = 1,
-            marker = :hexagon,
-            markersize = 15,
-            strokecolor = :blue)
-h
-```
-
-    See discussion: [Markers without fill in Makie.jl](https://discourse.julialang.org/t/how-to-have-markers-without-fill-color-in-makie-jl/88698)
-
-##### Different Form for Each Point
-
-```@example plot7
-using Stereonet
-using CairoMakie
-
-trends = [0.0, 45.0, 90.0, 135.0]
-plunges = [15.0, 30.0, -45.0, -60.0]
-forms = [:a, :v, :a, :v]
-
-h = hemi(size=(450, 450), fontsize=12, tstep=90)
-lineations!(h, trends, plunges, form=forms)
-h
-```
-
-##### Same Form for All Points
-
-```@example plot8
-using Stereonet
-using CairoMakie
-
-trends = [0.0, 45.0, 90.0, 135.0]
-plunges = [15.0, 30.0, -45.0, -60.0]
-
-h = hemi(size=(450, 450), ticks=:car, fontsize=12)
-lineations!(h, trends, plunges, form=:v)
+            marker = [:rect, :pentagon, :hexagon, :utriangle],
+            markersize = 30,
+            strokecolor = [:blue, :green, :magenta, :red])
 h
 ```
 

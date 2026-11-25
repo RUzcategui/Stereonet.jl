@@ -58,40 +58,32 @@ function small_circle(axis::AbstractVector, cone_angle::Real; npts::Int=360)
     return reduce(vcat, (reshape(cos(α).*a .+ sin(α).*(cos(t).*u1 .+ sin(t).*u2),1,3) for t in θ))
 end
 
-function line_coordinates(t, p, net::Symbol, view::Tuple{<:Real,<:Real}, acor::Real;
-                          form::Union{Symbol,AbstractVector{<:Symbol}}=:a)
 
-    tv, pv = _as_float_vector(t), _as_float_vector(p)
+function line_cart_coordinates(t, p)
+    tv::Vector{Float64} = _as_float_vector(t)
+    pv::Vector{Float64} = _as_float_vector(p)
+
     length(tv) == length(pv) || throw(StereonetError("Trend and plunge vectors must have same length"))
-    forms = form isa Symbol ? fill(form,length(tv)) : collect(form)
-    length(forms) == length(tv) || throw(StereonetError("Trend, plunge and form vectors must have same length"))
-    all(f -> f in (:a,:v), forms) || throw(StereonetError("form must be :a (axis) or :v (vector)"))
-    
-    project = select_net_equation(net)
-    result = Matrix{Float64}[]
-	vector_in_upper_hem = Vector{Bool}[]
-    for i in eachindex(tv)
-        v = vec(cartesian_coords(tv[i],pv[i]))
-        v = change_view_direction(v,view,acor; reproject=(forms[i] === :a))
 
-		if forms[i] === :v && v[3] < 0
-			v[3] = -v[3]
-            push!(vector_in_upper_hem, true)
-        else
-            push!(vector_in_upper_hem, false)
-		end
-        push!(result, project(reshape(v,1,3), :lower))
+    result::Vector{Vector{Float64}} = Vector{Vector{Float64}}()
+
+    for i in eachindex(tv)
+        v::Vector{Float64} = vec(Float64.(cartesian_coords(tv[i], pv[i])))
+        push!(result, v)
     end
-    return (result, vector_in_upper_hem)
+
+    return result
 end
+
+
 
 function _plane_curve(dipdir::Real,dip::Real,net::Symbol,view,acor,hemisphere::Symbol)
     d = mod(Float64(dipdir),360)
     δ = Float64(dip)
     n = normal_vector(d,δ)
     strike = [sind(d),-cosd(d),0.0] # RHR strike, axial direction
-    nv = change_view_direction(n,view,acor;reproject=false)
-    sv = change_view_direction(strike,view,acor;reproject=false)
+    nv = change_view_direction(n,view,acor)
+    sv = change_view_direction(strike,view,acor)
     gc = great_circle(nv,sv,0)
     segs = select_hemisphere_segments(gc,hemisphere)
     project = select_net_equation(net)
@@ -114,7 +106,7 @@ function small_circle_coords(trd::Real,plg::Real,angle::Real,net::Symbol,
                               view::Tuple{<:Real,<:Real},acor::Real)
     0 <= angle <= 180 || throw(StereonetError("Cone angle must be between 0° and 180°, got '$angle'"))
     axis_world = vec(cartesian_coords(trd,plg))
-    axis_view = _unit(change_view_direction(axis_world,view,acor;reproject=false))
+    axis_view = _unit(change_view_direction(axis_world,view,acor))
     project = select_net_equation(net)
     segments = Matrix{Float64}[]
     for axis in (axis_view,-axis_view)

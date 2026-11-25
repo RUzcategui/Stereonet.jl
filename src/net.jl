@@ -18,8 +18,7 @@ function great_circle_grid(
 
     # Transform the reference strike into the viewing frame.
     strike_view = change_view_direction(
-        strike_world, view, acor;
-        reproject=false
+        strike_world, view, acor
     )
 
     # Generate the original family of great circles.
@@ -29,8 +28,7 @@ function great_circle_grid(
         n = change_view_direction(
             normal_vector(dipdir, dip),
             view,
-            acor;
-            reproject=false
+            acor
         )
 
         gc = great_circle(
@@ -53,7 +51,7 @@ function small_circle_grid(sstep::Real,net::Symbol,
                            view::Tuple{<:Real,<:Real},acor::Real)
     sstep > 0 || throw(ArgumentError("sstep must be positive"))
     project = select_net_equation(net)
-    axis = change_view_direction([1.0,0.0,0.0],view,acor;reproject=false)
+    axis = change_view_direction([1.0,0.0,0.0],view,acor)
     result = Matrix{Float64}[]
     for α in sstep:sstep:(180-sstep)
         α == 90 && continue

@@ -37,3 +37,26 @@ xy_wulff(m::AbstractMatrix{<:Real}) = _project(m, :lower, :wulff)
 xy_schmidt(m::AbstractMatrix{<:Real}) = _project(m, :lower, :schmidt)
 xy_wulff(m::AbstractMatrix{<:Real}, h::Symbol) = _project(m, h, :wulff)
 xy_schmidt(m::AbstractMatrix{<:Real}, h::Symbol) = _project(m, h, :schmidt)
+
+function project_to_net(c::AbstractVector{<:AbstractVector{<:Real}},
+    net::Symbol)
+
+    project = select_net_equation(net)
+
+    result::Vector{Matrix{Float64}} = Matrix{Float64}[]
+
+    for i in eachindex(c)
+
+        length(c[i]) == 3 ||
+            throw(ArgumentError(
+                "Input vectors must have three components"
+            ))
+
+        v::Matrix{Float64} = reshape(Float64.(c[i]), 1, 3)
+
+        push!(result, project(v, :lower))
+
+    end
+
+    return result
+end

@@ -65,12 +65,14 @@ function draw_hemi!(h::HemiPlot)
     end
 
     #Ticklines
-    pts = Point2f[]
-    starts,ends = radial_ticks_coords(att.tstep, tlen)
-    for i in axes(starts,1)
-        push!(pts,Point2f(starts[i,1],starts[i,2]),Point2f(ends[i,1],ends[i,2]))
+    if att.view[2]==90
+        pts = Point2f[]
+        starts,ends = radial_ticks_coords(att.tstep, tlen)
+        for i in axes(starts,1)
+            push!(pts,Point2f(starts[i,1],starts[i,2]),Point2f(ends[i,1],ends[i,2]))
+        end
+        linesegments!(ax,pts;color=att.grid_color,linewidth=att.grid_linewidth,alpha=att.grid_alpha)
     end
-    linesegments!(ax,pts;color=att.grid_color,linewidth=att.grid_linewidth,alpha=att.grid_alpha)
 	
 	if att.ticks===:car && att.view[2]==90
         r_text = 1.0 + 3 * tlen
@@ -95,14 +97,14 @@ function draw_hemi!(h::HemiPlot)
             rot=deg2rad(θrot)-π/2
             π/2<mod(rot,2π)<3π/2 && (rot+=π)
             rot = (rot == -π/2) ? 0 : rot
-            if rad2deg(rot) >= 360. && rad2deg(rot) <= 440.
-                r_text = 1.0 + 4.4 * tlen
-            end
-            if rad2deg(rot) > 440. && rad2deg(rot) <= 450.
-                r_text = 1.0 + 3.6 * tlen
-            end
+
             if label_angle == 0.
-                r_text = 1.0 + 2.8 * tlen
+                r_text = 1.0 + 3.5 * tlen
+                #rot = π/2
+            elseif  label_angle >= 10. &&  label_angle < 100.
+                r_text = 1.0 + 3.5 * tlen
+            elseif  label_angle >= 100. &&  label_angle <= 360.
+                r_text = 1.0 + 4.6 * tlen
             end
             
             text!(ax,string(label_angle,"°"),position=Point2f(r_text*x, r_text*y),
@@ -227,27 +229,63 @@ lineations!(h, 45, 30)
 lineations!(h, [10, 40], [20, 60])
 ```
 """
-function lineations!(h::HemiPlot, trd, plg; form=:a, 
-    color=:black, markersize=6, align=(:left, :center), offset=(8, 0), 
-    fontsize=12,  labels=nothing, text_kwargs=(;), kwargs...)
+function lineations!(h::HemiPlot, trd::Union{Real,AbstractVector{<:Real}},
+                                  plg::Union{Real,AbstractVector{<:Real}}; 
+                                  form::Union{Symbol,AbstractVector{<:Symbol}}=:a, 
+                                  color=:black, markersize=6, align=(:left, :center), 
+                                  marker= nothing, offset=(8, 0), fontsize=12, labels=nothing, 
+                                  text_kwargs=(;), kwargs...)
 
-    pts, upper_hem = line_coordinates(trd, plg, h.att.net, h.att.view, h.att.acor; form)
+    pts = line_cart_coordinates(trd, plg)
 
-     for i in eachindex(upper_hem)
+    forms::Vector{Symbol} = form isa Symbol ? fill(form, length(pts)) : collect(form)
 
-        
-     end
+    length(forms) == length(pts) || throw(StereonetError("Coordinates and form vectors must have same length"))
+    all(f -> f in (:a, :v), forms) || throw(StereonetError("form must be :a (axis) or :v (vector)"))
 
+    if !(h.att.view == (0, 90) && h.att.acor == 0)
+        pts = change_view_direction(pts, h.att.view, h.att.acor)
+    end
+
+    upper_hem = vector_in_upper_hem(pts)
+
+
+    #when z<0, plot :axis in lower hem. and :vector in upper
+    for i in eachindex(pts)
+        if forms[i] === :a
+            pts[i] = correct_axis([pts[i]], [upper_hem[i]])[1]
+        elseif forms[i] === :v
+            pts[i] = correct_vector([pts[i]], [upper_hem[i]])[1]
+        end
+    end
+
+    pts = project_to_net(pts, h.att.net)
+    
     isempty(pts) && return nothing
     xy = vcat(pts...)
+    if marker === nothing
+        hollow::BitVector = [upper_hem[i] && forms[i] === :v for i in eachindex(pts)]
+        solid_idx = findall(.!hollow)
+        hollow_idx = findall(hollow)
 
-    scatter!(h.ax, xy[:, 1], xy[:, 2]; color, markersize, kwargs...)
+        if !isempty(solid_idx)
+            scatter!(h.ax, xy[solid_idx, 1], xy[solid_idx, 2];
+                     color, marker=:circle, markersize, kwargs...)
+        end
+
+        if !isempty(hollow_idx) 
+            scatter!(h.ax, xy[hollow_idx, 1], xy[hollow_idx, 2];
+                     marker=:circle, color=:transparent, markersize = 13,
+                     strokecolor=color, strokewidth=1.5, kwargs...)
+        end
+    else
+        scatter!(h.ax, xy[:, 1], xy[:, 2]; color, marker, markersize, kwargs...)
+    end
 
     labels === nothing && return h
 
-
     text!(h.ax, xy[:, 1], xy[:, 2]; text=labels, align, offset, fontsize, text_kwargs...)
-
+   
     return h
 end
 
@@ -287,27 +325,38 @@ traces!(h, 120, 45)
 traces!(h, [30, 60], [40, 50], view = :pole)
 ```
 """
-function traces!(h::HemiPlot,dipdir,dip;hemi=:lower,view=:trace,
-    polecolor=:black,polealpha=1,strokecolor=:black,strokewidth=0,
-    linecolor=:black,linewidth=1.3,linealpha=1,kwargs...)
-    view in (:trace,:pole) || throw(StereonetError("view must be :trace or :pole"))
-    dv,pv=_as_float_vector(dipdir),_as_float_vector(dip)
-    length(dv)==length(pv) || throw(ArgumentError("dipdir and dip must have the same length"))
-    if view===:trace
-        curves=plane_coordinates(dv,pv,h.att.net,h.att.view,h.att.acor;hemi)
-        plots=Any[]
+function traces!(h::HemiPlot, dipdir, dip; hemi=:lower, view=:trace, polecolor=:black, polealpha=1, strokecolor=:black, strokewidth=0, linecolor=:black, linewidth=1.3, linealpha=1, kwargs...)
+    view in (:trace, :pole) || throw(StereonetError("view must be :trace or :pole"))
+
+    dv::Vector{Float64} = _as_float_vector(dipdir)
+    pv::Vector{Float64} = _as_float_vector(dip)
+
+    length(dv) == length(pv) || throw(ArgumentError("dipdir and dip must have the same length"))
+
+    if view === :trace
+        curves = plane_coordinates(dv, pv, h.att.net, h.att.view, h.att.acor; hemi)
+
+        plots::Vector{Any} = Any[]
+
         for curve in curves
-            push!(plots,lines!(h.ax,curve[:,1],curve[:,2];color=linecolor,
-                               alpha=linealpha,linewidth,kwargs...))
+            push!(plots, lines!(h.ax, curve[:, 1], curve[:, 2]; color=linecolor, alpha=linealpha, linewidth, kwargs...))
         end
+
         return plots
     end
-    poles=[pole(dv[i],pv[i]) for i in eachindex(dv)]
+
+    poles = [pole(dv[i], pv[i]) for i in eachindex(dv)]
     isempty(poles) && return nothing
-    pts=line_coordinates(first.(poles),last.(poles),h.att.net,h.att.view,h.att.acor;form=:a)
-    xy=vcat(pts...)
-    return scatter!(h.ax,xy[:,1],xy[:,2];color=polecolor,alpha=polealpha,
-                    strokecolor,strokewidth,kwargs...)
+
+    pts::Vector{Vector{Float64}} = line_cart_coordinates(first.(poles), last.(poles))
+
+    pts = change_view_direction(pts, h.att.view, h.att.acor)
+
+    projected_pts::Vector{Matrix{Float64}} = project_to_net(pts, h.att.net)
+
+    xy = vcat(projected_pts...)
+
+    return scatter!(h.ax, xy[:, 1], xy[:, 2]; color=polecolor, alpha=polealpha, strokecolor, strokewidth, kwargs...)
 end
 
 function circular_arc(p1::Vector{Float64},p2::Vector{Float64},step_deg::Float64)

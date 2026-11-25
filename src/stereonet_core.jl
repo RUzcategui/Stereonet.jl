@@ -62,15 +62,65 @@ function rotation_mat(view::Tuple{<:Real,<:Real}, az_correction::Real; reproject
     return Rz_az * Ry_plunge * Rz_trend
 end
 
-function change_view_direction(v::AbstractVector{<:Real},
-                               view::Tuple{<:Real,<:Real},
-                               a_cor::Real; reproject::Bool=true)
+function change_view_direction(v::AbstractVector{<:Real}, view::Tuple{<:Real,<:Real}, a_cor::Real)
+
     length(v) == 3 || throw(ArgumentError("Input vector must have three components"))
-    rv = rotation_mat(view, a_cor) * Float64.(v)
-    if reproject && rv[3] < 0
-        rv .*= -1
+
+    return rotation_mat(view, a_cor) * Float64.(v)
+end
+
+function change_view_direction(c::AbstractVector{<:AbstractVector{<:Real}}, view::Tuple{<:Real,<:Real}, a_cor::Real)
+
+    result::Vector{Vector{Float64}} = Vector{Vector{Float64}}()
+
+    for i in eachindex(c)
+        push!(result, change_view_direction(c[i], view, a_cor))
     end
-    return rv
+
+    return result
+end
+
+function correct_axis(c::AbstractVector{<:AbstractVector{<:Real}}, upper_hem::AbstractVector{Bool})
+
+    length(c) == length(upper_hem) || throw(ArgumentError("Coordinates and hemisphere vectors must have the same length"))
+
+    result::Vector{Vector{Float64}} = deepcopy(c)
+
+    for i in eachindex(result)
+        if upper_hem[i]
+            result[i] .*= -1
+        end
+    end
+
+    return result
+end
+
+function correct_vector(c::AbstractVector{<:AbstractVector{<:Real}}, upper_hem::AbstractVector{Bool})
+
+    length(c) == length(upper_hem) || throw(ArgumentError("Coordinates and hemisphere vectors must have the same length"))
+
+    result::Vector{Vector{Float64}} = deepcopy(c)
+
+    for i in eachindex(result)
+        if upper_hem[i]
+            result[i][3] *= -1
+        end
+    end
+
+    return result
+end
+
+#Returns a BitVector:
+# true: the vector is in the upper hemisphere (Z < 0)
+# false: the vector is in the lower hemisphere (Z ≥ 0)
+function vector_in_upper_hem(c)
+    upper_hem::BitVector = falses(length(c))
+
+    for i in eachindex(c)
+        upper_hem[i] = c[i][3] < 0
+    end
+
+    return upper_hem
 end
 
 # Return each continuous portion of a sampled curve in the requested
